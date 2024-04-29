@@ -1,0 +1,15 @@
+<!-- You are given two numbers representing `distance` and `time`. You need to calculate the `speed` using the formula `speed = distance/time` and determine whether to apply brakes or keep going based on the speed. -->
+
+Psuedo Code
+Algorithm to to claulate speed of the car and determine whether to apply brakes or keep going based on the speed.
+input: two variable distance and time:
+output: A string based on the condition
+
+begin: Calculate the speed with the help of distance and time
+       speed = distance / time
+       Check if the speed of car is above 40 or not
+       if speed > 40
+       print("apply brakes")
+       else 
+       print("Keep going")
+end

@@ -1,0 +1,19 @@
+# **Description:** Write a Python program to check if a given element exists in a tuple.
+
+# **Sample Input:** Tuple - `(10, 9, 8, 7, 6, 5)`, Element to check - `9`
+
+# **Sample Output:** `True`
+
+
+
+tp = (10, 9, 8, 7, 6, 5)
+element = 9
+ans = False
+for i in tp:
+  if i == element:
+    ans = True
+    break
+if ans:
+  print("True")
+else:
+  print("False")

@@ -1,0 +1,26 @@
+### Problem Description
+<!-- Write the Psuedocode for below :
+You are provided with the dimensions of two rectangles. For the first rectangle, you have lengths L1 and B1, and for the second rectangle, you have lengths L2 and B2. You need to determine if the area of the first rectangle is greater than the second, and if the perimeter of the first rectangle is greater than the second. -->
+
+Psuedo Code:
+Algorithm to compare the area and perimeter of the given rectangles
+input : Four variables L1, L2, B1, B2
+output:true or false based on given condition 
+
+Begin:Calculate the Area of both rectangles
+      Area1 =  L1 * B1
+      Area2 =  L2 * B2
+      Calculate the perimeter of both rectangles
+      Perimeter1 =  2* (L1 + B1)
+      perimeter2 =  2* (L2 + B2)
+      Compare the Area of both rectangles
+      if Area1 > Area2:
+      print("true")
+      else:
+      print("false")
+      Compare the Perimeter of both rectangles
+      if Perimeter1 > Perimeter2
+      print("true")
+      else:
+      print("false")
+end 

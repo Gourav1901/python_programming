@@ -1,0 +1,32 @@
+# Write the Psuedocode for below :
+
+# You are given two numbers stored in two variables, with the name, `num1` and `num2`.
+
+# Print the result of the following operations:
+
+# 1. `num1 > num2` -> this operation prints true, if `num1` is greater than `num2`, otherwise it prints false
+# 2. `num1 < num2` -> this operation prints true, if `num1` is smaller than `num2`, otherwise it prints false
+# 3. `num1 == num2` -> this operation print true, if `num1` is equal to `num2`, otherwise it prints false
+
+Psuedo Code:
+Algorithm to compare two number
+input:Two variable num1 and num2
+output: True or False based on given condition
+
+begin:compare both the numeber for the condition 
+     if num1 > num2
+     print("true")
+     else 
+     print("False")
+     compare both the number for the condition
+     if num1 < num2
+     print("true")
+     else:
+     print("False")  
+     comapre both the number for the condition 
+     if num1  == num2
+     print("true")
+     else
+     print("false") 
+end
+

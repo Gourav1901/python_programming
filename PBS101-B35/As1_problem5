@@ -1,0 +1,16 @@
+### Problem Description
+
+<!-- You are given two numbers, stored in variables with the names `fuel` and `distance`. You must calculate the value of `required`, determined by the product of `fuel` and `distance`. If `required` is greater than 50, the output should indicate that you have enough fuel, otherwise, you should continue the journey. -->
+
+
+Algorithm to to claulate  the value of `required`, determined by the product of `fuel` and `distance`.
+input = two variables fuel and distance
+output: A string based on the value of required
+Begin:Calculate the value of required 
+      required  = fuel * distance
+      Check if the requred is greater than 50 
+      if required > 50 
+      print("Enough")
+      else:
+      print("Go On")
+end
