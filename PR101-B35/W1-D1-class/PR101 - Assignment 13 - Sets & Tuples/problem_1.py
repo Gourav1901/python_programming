@@ -4,22 +4,15 @@
 # **Sample Output:** `[1, 5, 6]`
 
 
-# input = [1, 2, 2, 3, 4, 5, 3, 6, 4]
-# seen = set()
-# unique_elements = []
+input = [1, 2, 2, 3, 4, 5, 3, 6, 4]
+seen = set()
+unique_elements = []
 
-# for num in input:
-#   if num not in seen:
-#       seen.add(num)
-#       unique_elements.append(num)
-#   elif num in unique_elements:
-#       unique_elements.remove(num)
+for num in input:
+  if num not in seen:
+      seen.add(num)
+      unique_elements.append(num)
+  elif num in unique_elements:
+      unique_elements.remove(num)
 
-# print(unique_elements)
-ar = [100,20,40]
-ar2 = [2,1,2]
-sum = 0
-l = len(ar)
-for i in range(l):
-    sum += ar[i] * ar2[i]
-print(sum)
+print(unique_elements)
