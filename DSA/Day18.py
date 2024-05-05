@@ -28,3 +28,27 @@
 #             en += char
             
 #     print(en,end="")
+
+# def is_prime(l1):
+#   if l1 > 1:
+#     is_prime = True
+#     for k in range(2,l1):
+#       if l1 % k == 0:
+#         is_prime = False
+#         break
+#     return is_prime
+       
+# string = "abc"
+# n = len(string)
+
+# for i in range(n):
+#   for j in range(i+1,n+1):
+#     l1 = len(string[i:j])
+#     if is_prime(l1):
+#       print(string[i:j])
+
+
+
+
+
+       
