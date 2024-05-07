@@ -112,25 +112,25 @@
        
     
       
-def solve(N,K, arr):
-    sorted_arr = sorted(arr)
-    s = 0
-    end = N-1
-    count = 0
-    print(sorted_arr)
-    while s < end:
-        if sorted_arr[s] + sorted_arr[end] == K:
-            count += 1
-            s += 1
+# def solve(N,K, arr):
+#     sorted_arr = sorted(arr)
+#     s = 0
+#     end = N-1
+#     count = 0
+#     print(sorted_arr)
+#     while s < end:
+#         if sorted_arr[s] + sorted_arr[end] == K:
+#             count += 1
+#             s += 1
             
-        else:
-            end -= 1
+#         else:
+#             end -= 1
        
-    print(count)
-arr = [3,0,6,2,7]
-N = 5
-K = 9
-solve(N,K,arr)
+#     print(count)
+# arr = [3,0,6,2,7]
+# N = 5
+# K = 9
+# solve(N,K,arr)
     
 
 
