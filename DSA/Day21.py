@@ -32,3 +32,8 @@ mat = [
 z_trv(mat)
 n_trv(mat)
 sk_trv(mat)
+
+
+
+
+
