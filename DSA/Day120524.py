@@ -14,3 +14,20 @@
 # 	            i += 1
 # 	    return res
 
+# class Solution:
+#     def sortedMatrix(self,N,Mat):
+#         l = []
+#         for row in Mat:
+#             for ele in row:
+#                 l.append(ele)
+#         l.sort()
+        
+#         ans = []
+        
+#         for i in range(N):
+#             Row = []
+#             for j in range(N):
+#                 Row.append(l[i * N + j]) 
+#             ans.append(Row)
+#         return ans
+#         #code here
