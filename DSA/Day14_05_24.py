@@ -33,7 +33,25 @@
         
 #         pro *=(arr[j][i])
 #     print(pro)   
-    
 
+
+#qus to find out occrence of a no maxi time in an array
+n = int(input())
+arr = list(map(int,input().split()))
+
+dict_T = {}
+for i in range(n):
+    if arr[i] not in dict_T:
+        dict_T[arr[i]] = 1
+    else:
+        dict_T[arr[i]] += 1
+    
+    maxx = 0
+    occ = 0
+    for key, value in dict_T.items():
+        if value > maxx :
+            maxx = value
+            occ = key
+print(occ)
 
 
