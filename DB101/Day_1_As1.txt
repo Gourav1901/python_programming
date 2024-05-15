@@ -1,0 +1,175 @@
+What is a databases ?
+Ans.Database is an organised collection of data , so that it can be easily 
+accessed and managed.
+A database usually controlled by DBMS
+
+What is DBMS?
+Ans.DBMS stands for Databse Management System. It is a collection of programs 
+that enables user to create and maintain the database
+
+What is the difference between DBMS and RDBMS ?
+Ans.The key difference is that RDBMS (Relational Database Management System) stores
+    data in a tabular form, whereas DBMS may not.
+    RDBMS also supports a structure that allows for the easy relationship of tables with keys,
+    which isn't necessarily a feature in DBMS.
+
+
+4.What is SQL ?
+Ans.SQL stands for structured Query Language which is database language used to communicate 
+with database
+5.What is MySQL ?
+Ans.It is the software component that actually manages the databases and their data.
+6.What is the difference between SQL and MySQL?
+Ans.SQL: A standard language used for querying and managing relational databases.
+         Provides the commands and syntax (like SELECT, INSERT, UPDATE) for performing
+         operations on data.
+    MySQL: An open-source relational database management system (RDBMS) that uses SQL to
+          perform database operations. 
+          Provides the software environment for creating, managing, and interacting with databases,
+          using SQL as its query language.
+7.What is Tables in SQL ?
+Ans.In a relational database, tables are collections of related data entries and they consist of columns and rows.
+
+8.Explain Different data types in SQL with example.
+Ans.Data Types in Table :
+INT : Used to store whole numbers.
+
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    age INT
+);
+VARCHAR(size): Used for variable-length character strings.
+
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50)
+);
+CHAR(size): Used for fixed-length character strings
+
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_code CHAR(10),
+    product_name VARCHAR(100)
+);
+DATE: Used to store dates in 'YYYY-MM-DD' format.
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    order_date DATE
+);
+TIME: Used to store time values in 'HH:MM:SS' format.
+
+CREATE TABLE appointments (
+    appointment_id INT PRIMARY KEY,
+    appointment_time TIME
+);
+DATETIME : Used to store both date and time values in 'YYYY-MM-DD HH:MM:SS' format.
+
+CREATE TABLE events (
+    event_id INT PRIMARY KEY,
+    event_datetime DATETIME
+);
+DECIMAL(precision, scale): Used to store fixed-point numbers with a specified number of digits (precision) and a specified number of decimal places (scale).
+
+CREATE TABLE accounts (
+    account_id INT PRIMARY KEY,
+    balance DECIMAL(10, 2)
+);
+BOOLEAN: Used to store true/false or 1/0 values.
+
+CREATE TABLE users (
+    user_id INT PRIMARY KEY,
+    is_active BOOLEAN
+);
+ENUM: Used to store one of a predefined list of values.
+
+CREATE TABLE colors (
+    color_id INT PRIMARY KEY,
+    color_name ENUM('Red', 'Green', 'Blue')
+);
+9.Explain different Constrains in SQL with example.
+Ans.PRIMARY KEY: Ensures that the values in a column (or a set of columns) are unique and not null
+
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50)
+);
+UNIQUE: Ensures that values in a column (or a set of columns) are unique but allows null values.
+
+CREATE TABLE employees (
+    employee_id INT UNIQUE,
+    email VARCHAR(100) UNIQUE
+);
+NOT NULL: Requires that a column cannot have null values. Every row must have a value in this column.
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    order_date DATE NOT NULL
+);
+AUTO_INCREMENT: Used with an integer column to automatically generate a unique value for each new row. Typically used with primary keys.
+
+CREATE TABLE employees (
+    employee_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50)
+);
+CHECK: Defines a condition that values in a column must satisfy. It is used to enforce data integrity rules.
+
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    stock_quantity INT,
+    CHECK (stock_quantity >= 0)
+);
+DEFAULT: Specifies a default value for a column when no value is provided during an insert operation.
+
+CREATE TABLE users (
+    user_id INT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    creation_date DATE DEFAULT CURRENT_DATE
+);
+10.Explain about CRUD operation and it's importance in Database ?
+Ans.Create:
+
+Operation: Adds new records.
+SQL Command: INSERT
+Example:
+sql
+Copy code
+INSERT INTO employees (id, name, position, salary) 
+VALUES (1, 'John Doe', 'Manager', 60000);
+Read:
+
+Operation: Retrieves records.
+SQL Command: SELECT
+Example:
+sql
+Copy code
+SELECT * FROM employees WHERE id = 1;
+Update:
+
+Operation: Modifies existing records.
+SQL Command: UPDATE
+Example:
+sql
+Copy code
+UPDATE employees 
+SET salary = 65000 
+WHERE id = 1;
+Delete:
+
+Operation: Removes records.
+SQL Command: DELETE
+Example:
+sql
+Copy code
+DELETE FROM employees 
+WHERE id = 1;
+Importance
+Data Management: Standardizes data handling.
+Data Integrity: Ensures data accuracy and consistency.
+User Interaction: Foundation for data-related user actions.
+Application Development: Simplifies design and maintenance.
+Scalability and Maintenance: Facilitates system scaling and upkeep.
+Security: Controls access and permissions.
