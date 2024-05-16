@@ -1,0 +1,92 @@
+Task 1: Create the Database
+Write the query to see all the database that you have in MySQL DBMS.
+Start by creating a database named - "Facebook".
+Write the query to use the database "Facebook".
+
+SHOW Database;
+CREAT DATABASE Facebook;
+USE Facebook;
+
+Task 2: Create the Table
+Create a table named Post.
+"Post" table should contain column - PostID , post_title , post_description ,
+ created_by , created_at , post_likes , Where PostID is the primary key for each post.
+Refer this sample data for reference of data types - Link
+Write the query to describe the schema of this table ?
+Write the query to delete the whole table ?
+
+CREAT TABLE Post (
+  PostID INT PRIMARY KEY,
+  post_title = VARCHAR(255),
+  post_description = TEXT,
+  created_by  VARCHAR(100),
+  created_at TIMESTAMPS,
+  Post_likes INT,
+  Punlic Boolean 
+);
+
+ Insert Data into tables
+
+Insert all the 10 sample data as per given in the sheet - Link
+(1,	"The Joy of Painting"	,"Discover the simplicity and beauty of painting with this
+ introductory guide",	"Alice"	,"2023-01-01 00:00:00" ,	5	,true)
+
+ INSERT INTO Post (PostID, post_title, post_description, created_by, created_at, post_likes)
+ VALUES
+(1,	"The Joy of Painting"	,"Discover the simplicity and beauty of painting with this
+ introductory guide",	"Alice"	,"2023-01-01 00:00:00" ,	5,true),
+(2,"A Beginner's Guide to Programming", "Dive into the world of programming with these easy to follow steps."
+  "Bob", "02/01/2023 00:00:00",20,true)
+(3,"Top 10 Healthy Eating Habits", "Transform your diet and your life with these ten easy tips."
+  "Charlie", "05/01/2023 00:00:00",26)
+(4,"Understanding The Stock Market", "Demystifying the stock market for beginners and seasoned investors alike."
+  "Daina", "06/01/2023 00:00:00",76,false)
+(5,"The Future of Renewable Energy", "A look into how renewable energy sources will shape our future."
+  "Eve", "05/01/2023 00:00:00",70,true)
+(6,"The Secrets of Successful Entrepreneurs", "Learn what sets successful entrepreneurs apart from the rest."
+  "Charlie", "05/01/2023 00:00:00",28,true)
+(7,"Exploring the World of Photography", "A beginner's guide to capturing the world through the lens."
+  "Bank", "05/05/2023 00:00:00",67,false)
+(8,"Mastering the Art of Cooking", "Elevate your cooking skills with these professional tips and tricks.."
+  "Gourav", "05/01/2023 00:00:00",16,true)
+(9,"The Importance of Regular Exercise", "Why regular exercise is crucial for your health and how to get started."
+  "eve", "05/01/2023 00:00:00",46,false)
+(10,"Tips for Effective Time Management", "Maximize your productivity with these effective time management strategies"
+  "adam", "05/01/2023 00:00:00",66,true)
+
+Task 4 : Read data from the table
+Write query to get all the data from Post table.
+Write query to get only Author (created_by) and content (post_description ) from Post table.
+
+SELECT * FROM Post;
+SELECT created_by, post_description FROM Post;
+
+Task 5: Update a Post
+Write query to Update post_likes to 50 where PostId is 8.
+Write query to update isPublic to false and post_description to "This is only for me..."
+where Author name is Charlie.
+
+UPDATE POST 
+SET post_likes = 50 
+WHERE PostID = 8 
+
+Task 6: Delete a Post
+Write a query to Delete a post from the table with PostID 3.
+Write a query to delete a post from the table where post id is 6 and it is created by Frank.
+
+DELETE FROM POST 
+WHERE POstID = 3
+
+DELETE FROM POST
+WHERE POSTID = 6 AND created_by = "Frank"
+
+
+Task 7: Filtering
+Write a query to get all the post which are public.
+Write a query to get all the post where post like is greater than 15.
+
+SELECT * FROM POST
+WHERE public = TRUE;
+
+SELECT * FROM Post
+WHERE post_likes > 15;
