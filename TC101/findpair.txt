@@ -1,0 +1,33 @@
+N,K = map(int,input().split())
+
+arr = list(map(int,input().split()))
+count = 0 
+ arr.sort()  nlogn
+ s = 0        n
+ e = n-1
+                                nlogn + n    nlogn
+ while s < e:
+    if arr[s] + arr[e] == K:
+        count += 1
+        s += 1
+        e -= 1
+    elif arr[s] + arr[e] < k:
+         s += 1
+    else:
+         e -= 1
+print(count)
+    
+
+
+
+
+
+
+
+for i in range(N-1):       O(N)
+    for j in range(i+1,N):  O(N)     O(N**2) O(N**2)
+        if arr[i] + arr[j]  == k:
+             count += 1
+
+print(count)
+
