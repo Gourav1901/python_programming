@@ -1,0 +1,98 @@
+Given a dataset with the following schema:
+
+    CREATE TABLE products (
+        index INT,
+        product TEXT,
+        category TEXT,
+        sub_category TEXT,
+        brand TEXT,
+        sale_price INT,
+        market_price INT,
+        type TEXT,
+        rating DOUBLE,
+        description TEXT
+    );
+
+1. Calculate the discount amount for each product using the formula (market_price - sale_price).
+Ans. SELECT product_id, (market_price - sale_price) AS discount_amount
+     FROM products;
+
+2. Determine the discount percentage for each product using the formula ((market_price - sale_price) / market_price) * 100.
+Ans. SELECT product_id, ((market_price - sale_price) / market_price) * 100 AS discount_percentage
+     FROM products;
+
+3. Find the modulo of sale price by 10 for each product.
+Ans. SELECT product_id, (sale_price % 10) AS sale_price_modulo_10
+     FROM products;
+
+4. Find products with a rating equal to or higher than 4.0.
+Ans. SELECT product_id, product_name, rating
+     FROM products
+     WHERE rating >= 4.0;
+
+
+5. Identify products whose market price is different from the sale price.
+Ans. SELECT product_id, product_name
+     FROM products
+     WHERE market_price <> sale_price;
+
+6. List products with a sale price less than or equal to 500.
+Ans. SELECT product_id, product_name, sale_price
+     FROM products
+     WHERE sale_price <= 500;
+
+
+7. Retrieve products with a sale price between 200 and 400 inclusive.
+Ans. SELECT product_id, product_name
+     FROM products
+     WHERE sale_price BETWEEN 200 AND 400;
+
+8. Find products with a rating above 4.5 and a sale price below 300.
+Ans. SELECT product_id, product_name, rating, sale_price
+     FROM products
+     WHERE rating > 4.5 AND sale_price < 300;
+
+9. Get products with either a type 'Lamp &amp; Lamp Oil' or 'Roasted Seeds &amp; Nuts'.
+Ans. SELECT * FROM products
+     WHERE type = 'Lamp & Lamp Oil' OR type = 'Roasted Seeds & Nuts';
+
+
+10. Locate products that do not have 'Home' as their category.
+Ans. SELECT * FROM products
+     WHERE category != 'Home';
+
+11.Sort products by their sale price in ascending order.
+Ans. SELECT * FROM products
+     ORDER BY sale_price ASC;
+
+12.Sort products by their category in descending order.
+Ans.SELECT * FROM products
+     ORDER BY category DESC;
+
+13.Sort products first by their type in ascending order and
+ then by their rating in descending order.
+ SELECT * FROM products
+ ORDER BY type ASC, rating DESC;
+
+14.Retrieve the top 5 products with the highest rating.
+SELECT * FROM products
+ORDER BY rating DESC
+ LIMIT 5;
+
+15.Get the next 5 products after the top 5 products with the highest rating.
+SELECT * FROM products
+ORDER BY rating DESC
+ LIMIT 5 OFFSET 5;
+
+16.Display only 3 products with the lowest sale price.
+  SELECT * FROM products
+  ORDER BY sales_price ASC
+  LIMIT 3
+
+17.Find all distinct category present in the dataset.
+SELECT DISTINCT catagories FROM products;
+
+18.List all distinct brands within the 'Beauty & Hygiene' category.
+SELECT DISTINCT brands
+WHERE category = ;Beauty' and 'Hygiene'
+    
