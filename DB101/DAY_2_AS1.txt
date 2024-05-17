@@ -1,0 +1,225 @@
+1.Describe the types of SQL Commands (DDL, DML, DCL, TCL, DQL) in short with a use case and example for each.
+Ans.The operations performed in SQL can be categorized into five major commands , Each category serves a different purpose and contains commands to perform various operations:
+DDL : (Data Definition Language)
+DML : (Data Manipulation Language)
+DCL : (Data Control Language)
+TCL : (Transaction Control Language)
+DQL : (Data Query Language)
+DDL : (Data Definition Language)
+DDL commands are used to define, modify, and delete the structure of database objects such as tables, indexes, and constraints
+They don't manipulate data itself, but rather define the structure of how data is stored in the database.
+Example :
+CREATE: Creates a new table or database.
+ALTER: Modifies the structure of an existing database object.
+DROP: Deletes an entire table or database.
+TRUNCATE: Deletes all records from a table without deleting the table itself.
+DML : (Data Manipulation Language)
+DML commands are used for managing data within schema objects.
+They are used to insert, update, or delete records from a database.
+Example :
+INSERT: Adds new records to a table.
+UPDATE: Modifies existing records in a table.
+DELETE: Removes records from a table.
+DCL : (Data Control Language)
+DCL commands are concerned with rights, permissions, and other controls of the database system.
+
+Examples :
+GRANT: Gives user's access privileges to the database.
+REVOKE: Withdraws user's access privileges given by the GRANT command.
+TCL : (Transaction Control Language)
+TCL commands deal with the transaction operations within the database.
+These commands help in managing the changes made by DML statements.
+Examples :
+COMMIT: Saves all the transactions to the database.
+ROLLBACK: Restores the database to the last committed state.
+SAVEPOINT: Sets a savepoint within a transaction.
+DQL (Data Query Language)
+DQL is primarily used to fetch data from databases. It uses only one command:
+
+2.What is the importance of ALTER TABLE in SQL?
+Ans.The ALTER TABLE statement in SQL is crucial for:
+Adding Columns: Expands the table schema.
+Modifying Columns: Changes column data types, sizes, or constraints.
+Dropping Columns: Removes unnecessary columns.
+Renaming Columns/Tables: Updates names for clarity and consistency.
+Managing Constraints: Adds or drops primary keys, foreign keys, and other constraints.
+Trigger Management: Enables or disables triggers.
+Partitioning: Modifies table partitioning schemes.
+These functions help maintain and adapt the database structure to evolving requirements, ensuring data integrity and performance.
+
+3.How do you delete all the data from a Table without deleting the table itself?
+Ans.To delete all the data from a table without deleting the table itself, you can use either the DELETE statement or the TRUNCATE
+    statement in SQL. Here’s a brief overview of both methods:
+    Using DELETE Statement:
+    Syntax: DELETE FROM table_name;
+    Using TRUNCATE Statement:
+    Syntax: TRUNCATE TABLE table_name;
+4.What is the difference between DROP and TRUNCATE?
+Ans.Drop" in SQL refers to the removal of a table or database from a server. "Truncate" is a SQL command that removes all rows from
+    a table but keeps the table's structure intact.
+5.What are Arithmetic Operators in SQL? Give an example.
+Ans.Arithmetic operators in SQL are used to perform mathematical operations on numeric values in queries. The common arithmetic operators include addition (+), subtraction (-), multiplication (*), division (/), and modulo (%).
+    Here's an example of how they can be used in a SQL query:
+    Assume we have a table named 'numbers' with two columns: 'num1' and 'num2'
+
+-- Example of addition
+SELECT num1, num2, num1 + num2 AS addition_result
+FROM numbers;
+
+-- Example of subtraction
+SELECT num1, num2, num1 - num2 AS subtraction_result
+FROM numbers;
+
+-- Example of multiplication
+SELECT num1, num2, num1 * num2 AS multiplication_result
+FROM numbers;
+
+-- Example of division
+SELECT num1, num2, num1 / num2 AS division_result
+FROM numbers;
+
+-- Example of modulo (remainder)
+SELECT num1, num2, num1 % num2 AS modulo_result
+FROM numbers;
+
+6.What are Comparison Operators in SQL? Give an example.
+Ans.Comparison operators in SQL are fundamental tools that allow you to perform comparisons between values in your database, enabling you to filter, compare, and evaluate data based on specific criteria.
+
+Equal
+SELECT * FROM tableName WHERE column1 = 'value';
+
+-- Example
+SELECT * FROM employees WHERE department = 'Sales';
+Not Equal
+SELECT * FROM tableName WHERE column1 != 'value';
+-- OR 
+SELECT * FROM tableName WHERE column1 <> 'value';
+
+-- Example
+SELECT * FROM employees WHERE salary <> 50000;
+Greater Than or Greater than Equal
+SELECT * FROM tableName WHERE column1 > value;
+SELECT * FROM tableName WHERE column1 >= value;
+
+-- Example 
+SELECT * FROM employees WHERE age > 30;
+Less Than or Less than Equal
+SELECT * FROM tableName WHERE column1 < value;
+SELECT * FROM tableName WHERE column1 <= value;
+
+-- Example
+SELECT * FROM products WHERE price < 100;
+BETWEEN
+The BETWEEN operator is used to filter the result set within a certain range. The values can be numbers, text, or dates. This is inclusive of the boundary values.
+
+SELECT * FROM table_Name WHERE column_name BETWEEN smallValue AND largeValue;
+
+-- Examples 
+SELECT * FROM products WHERE price BETWEEN 50 AND 100;
+IS NULL
+The IS NULL operator is used to test for empty values (NULL values).
+
+SELECT * FROM tableName WHERE column1 IS NULL;
+
+-- Example
+SELECT * FROM employees WHERE commission IS NULL;
+IS NOT NULL
+The IS NOT NULL operator is used to test for non-empty values.
+
+SELECT * FROM tableName WHERE column1 IS NOT NULL;
+
+-- Example
+SELECT * FROM employees WHERE commission IS NOT NULL;
+Example
+Give all the details of Rich People Where country_of_residence is India
+
+SELECT * FROM richperson
+WHERE country_of_residence = "India"; 
+Give all the rich people where age is less than 30
+
+SELECT * FROM richperson
+WHERE age < 30;
+Give all the rich people where age is less than equal to 30 and greater than equal to 18
+
+SELECT * FROM richperson
+WHERE age BETWEEN 18 AND 29;
+Give all the rich people where column wealth is null
+
+SELECT * FROM richperson 
+WHERE wealth IS NULL;
+Give all the anme Rich people where column wealth is not null
+
+SELECT full_name FROM richperson 
+WHERE wealth IS NOT NULL;
+
+7.What are Logical Operators in SQL? Give an example.
+Ans.AND
+The AND operator is used when you want to retrieve records that satisfy all the conditions specified.
+
+SELECT * FROM tableName WHERE column1 = 'value' AND column2 = 'value';
+
+-- Example
+SELECT * FROM employees WHERE department = 'Sales' AND salary > 50000;
+OR
+The OR operator is used to fetch records that satisfy at least one of the given conditions.
+
+SELECT * FROM tableName WHERE column1 = 'value' OR column2 = 'value';
+
+-- Examples
+SELECT * FROM employees WHERE department = 'Sales' OR department = 'Marketing';
+NOT
+The NOT operator negates a condition, selecting records if the condition is false.
+
+SELECT * FROM tableName WHERE NOT (column1 = 'value');
+
+-- Example
+SELECT * FROM employees WHERE NOT department = 'Sales';
+IN
+Allows you to specify a list of values for a column in your condition. It is , essentially a shorthand for multiple OR conditions.
+
+SELECT * FROM table_Name WHERE column NOT IN ('value_1', 'value_2', 'value_3');
+
+-- Examples
+SELECT * FROM employees WHERE department IN ('Sales', 'Marketing');
+8.What is a set operator in SQL? Give an example.
+Ans.Set operators in SQL are used to combine the results of two or more SELECT queries into a single result set. There are three main set operators in SQL: UNION, INTERSECT, and EXCEPT (or MINUS, depending on the SQL dialect). Here's a brief explanation of each along with an example:
+    UNION: Combines the results of two or more SELECT statements into a single result set, eliminating duplicate rows.
+    INTERSECT: Returns only the rows that appear in both result sets of the SELECT statements.
+    EXCEPT (or MINUS): Returns only the rows that appear in the first result set but not in the second result set.
+9.How do you implement sorting in SQL?
+Sorting in MySQL is primarily accomplished through the ORDER BY clause.
+This powerful feature allows you to sort the results of your SELECT queries based on one or more columns, in ascending or descending order.
+10.How do you implement pagination using SQL?
+Assuming you display 10 rows per page, for page 1:
+
+SELECT * FROM employees LIMIT 10;
+For page 3 (skipping the first 20 rows to get rows 21-30):
+
+SELECT * FROM employees LIMIT 10 OFFSET 20;
+Shorthand Syntax Example:
+
+SELECT * FROM employees LIMIT 20, 10;
+11.What is the use case of DISTINCT in SQL?
+Ans.The DISTINCT keyword in MySQL is used to remove duplicate rows from a result set, returning only unique rows.
+It can be particularly useful when you have multiple records that are identical in one or several columns and you want to ensure that your query result includes each unique value only once.
+This feature is often used in queries involving the SELECT statement.
+Syntax :
+Single Column:
+
+SELECT DISTINCT column_name FROM table_name;
+Multiple Columns:
+
+SELECT DISTINCT column1, column2 FROM table;
+Example :
+Give all the distinct Brands who sales Mobile
+
+SELECT DISTINCT Brand FROM flipkart_mobiles;
+Give all the distinct Brands and Color from Mobile database
+
+SELECT DISTINCT Brand , Color FROM flipkart_mobiles;
+Give all the Unique Director who produces movie in Netflix.
+
+SELECT DISTINCT director FROM netflix;
+Give all the unique director name who produces movie in Nexflix and belongs to the country India
+
+SELECT DISTINCT director , country FROM netflix WHERE country = "India";
