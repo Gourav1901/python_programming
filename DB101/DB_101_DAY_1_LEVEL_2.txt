@@ -1,0 +1,43 @@
+Create a database (You need to give meaningful name)
+Create a table. Schema should be based on the UI provided. Give it meaningful name.
+Insert Dummy Data.
+Read All user Address.
+Update User Address.
+Delete User Address.
+Filter user address based on Condition.
+
+CREATE DATABASE register;
+
+USE register;
+
+CREATE TABLE details(
+  first_name  varchar(100) NOT NULL,
+  last_name varchar(100) NOT NULL<
+  phone_no integer NOT NULL,
+  email varchar(50) NOT NULL, UNIQUE,
+  street_address varchar(50)
+  apt varchar(10),
+  state varchar(50) NOT NULL,
+  zip_code varchar(10) NOT NULL
+);
+
+INSERT INTO details(first_name, last_name, phone_no, email, street_address, apt , state, zip_code)
+values
+('Gourav', 'Choudhary', '9977886655', 'grv@example.com', '123 Machal Street', 'Apt 1', 'M.P', '90001'),
+('Lakshya', 'Sagar', '1234567893', 'lk@example.com', '125 Machal Street', 'Apt 2', 'Indore', '453001'),
+('Hariom', 'Patel', '3773837382', 'hari@example.com', '127 Kalariya Street', 'Apt 3', 'kerela', '452001'),
+('Raj', 'Kamal', '9977845667', 'raj@example.com', '123 Betma Street', 'Apt 4', 'Bihar', '540011'),
+('Vikram', 'Choudhary', '9933445634', 'vikram@example.com', '123 Navdapanth Street', 'Apt 5', 'Jammu & Kashmir', '50001'),
+
+
+SELECT street_address, apt, state, zip_code FROM register;
+
+UPDATE details 
+SET address = '222 machal street' apt = '3' , state = 'Madhaya Pradesh', zip_code = '20000'
+WHERE email = 'grv@gmail.com'
+
+DELETE FROM details WHERE email = 'lk@example.com';
+
+SELECT street_address, apt, state, zip_code
+FROM details
+WHERE state = 'Indore';
