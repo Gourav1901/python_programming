@@ -1,0 +1,39 @@
+1.Create a database called blogdatabase.
+Ans. CREATE DATABASE blogdatabase;
+
+2.Create a table called user with the following columns:
+id (int)
+name (int) -- This will be updated later
+email (varchar)
+password (varchar)
+
+CREATE TABLE user (
+  id int NOT NULL PRIMARY KEY,
+  name int NOT NULL,
+  email VARCHAR(30)
+  password VARCHAR(30)
+
+);
+
+3.Update the data type of the name column from int to varchar(50).
+Ans. ALTER user
+     MODIFY COLUMN name VARCHAR(30);
+
+
+4.Add a new column called isStudent (Boolean) to the user table.
+Ans.ALTER user
+    ADD COLUMN isStudent  TINYINT(1)
+
+5.Insert 5 dummy data entries into the user table. Ensure the data reflects a realistic scenario where each field is populated according to its data type.
+INSERT INTO user (id,name, email , password )
+VALUES  (1, 'Gourav','grv@example.com', 'Goura@7575')
+        (2, 'Nvn','nvn@example.com', 'ura@7589')
+        (3, 'Jay','jp@example.com', 'a@2345')
+        (4, 'Kunal','kn@example.com', 'HLK@67i875')
+        (5, 'Nandkishor','mk@example.com', 'JKHja@775')
+
+6.Delete all the data from the user table without deleting the table schema.
+Ans. TRUNCATE TABLE user;
+
+7.Delete the user table schema.
+DROP TABLE user;
