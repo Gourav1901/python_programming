@@ -1,0 +1,56 @@
+Give short and concise answer for all the bellow listed questions :
+1.What is the LIKE operator in SQL, and provide a use case with a simple example?
+The LIKE operator in SQL is used for pattern matching through simple text patterns. This operator is often used in 
+a WHERE clause to search for a specified pattern in a column.
+//Starts with and and with a char 
+SELECT * FROM tableName WHERE column1 LIKE 'abc%abc'
+
+2.What is an Aggregate Function in SQL, and provide a use case with a simple example?
+Aggregate functions perform a calculation on a set of values and return a single value. They are used 
+extensively in SQL to summarize data.
+Example: To count the number of employees: 
+SELECT COUNT(employee_id) FROM employees;
+
+3.What is a String Function in SQL, and provide a use case with a simple example?
+String functions in SQL are built-in functions that perform operations on string data types. These functions can 
+manipulate character strings, perform operations based on the content of a string, convert formats, and much more.
+Example: Combine first and last names: 
+SELECT CONCAT(first_name, ' ', last_name) FROM employees;
+
+4.What is a Numeric Function in SQL, and provide a use case with a simple example?
+Numeric functions in SQL are built-in functions designed to perform operations on numeric data types. These 
+functions can execute mathematical calculations, format numbers, and perform various other operations related 
+to numerical data in SQL queries.
+Example: Calculate the square and square root of a number:
+ SELECT POWER(value, 2), SQRT(value) FROM numbers;
+
+5.What is a Date Function in SQL, and provide a use case with a simple example?
+Date functions in SQL are built-in functions that allow you to manipulate and extract information from date and 
+time values. These functions are crucial for performing operations such as calculating differences between dates, 
+formatting dates into a specific style, extracting parts of a date (like the day, month, or year), and much more
+SELECT DATE_ADD('2023-09-09', INTERVAL 1 DAY) AS added_date; 
+-- Result: '2023-09-10'
+
+6.Explain the difference between System Defined and User Defined Functions.
+ystem Defined Functions:
+System-defined functions are built-in functions provided by the SQL database management system (DBMS).
+These functions are pre-defined and cover a wide range of functionalities, including string manipulation, 
+numeric calculations, date and time operations, and more.
+Functions provided by the SQL database management system, such as NOW(), UPPER(), SUM(), etc.
+User Defined Functions :
+User-defined functions are functions that you can create in the database according to your specific requirements.
+UDFs allow encapsulating complex operations into a single function that can then be reused in multiple SQL queries,
+ enhancing modularity, readability, and maintainability of the database and its associated applications.
+
+7.What is CASE in SQL, and provide a use case with a simple example?
+The CASE expression goes through conditions and returns a value when the first condition is met 
+(like an if-then-else statement). So, once a condition is true, it will stop reading and return the result. 
+If no conditions are true, it returns the value in the ELSE clause.
+If there is no ELSE part and no conditions are true, it returns NULL.
+SELECT name,
+    CASE
+        WHEN age < 18 THEN 'Minor'
+        WHEN age >= 18 AND age < 65 THEN 'Adult'
+        ELSE 'Senior'
+    END AS age_group
+FROM users;

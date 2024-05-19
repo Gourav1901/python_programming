@@ -26,7 +26,7 @@ values
 ('Gourav', 'Choudhary', '9977886655', 'grv@example.com', '123 Machal Street', 'Apt 1', 'M.P', '90001'),
 ('Lakshya', 'Sagar', '1234567893', 'lk@example.com', '125 Machal Street', 'Apt 2', 'Indore', '453001'),
 ('Hariom', 'Patel', '3773837382', 'hari@example.com', '127 Kalariya Street', 'Apt 3', 'kerela', '452001'),
-('Raj', 'Kamal', '9977845667', 'raj@example.com', '123 Betma Street', 'Apt 4', 'Bihar', '540011'),
+('Nandkishor', 'Parmar', '9977845667', 'raj@example.com', '123 Betma Street', 'Apt 4', 'Bihar', '540011'),
 ('Vikram', 'Choudhary', '9933445634', 'vikram@example.com', '123 Navdapanth Street', 'Apt 5', 'Jammu & Kashmir', '50001'),
 
 
