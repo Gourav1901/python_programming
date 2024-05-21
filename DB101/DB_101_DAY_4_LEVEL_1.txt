@@ -1,0 +1,47 @@
+Problem Statement
+Give short and concise answer for all the bellow listed questions :
+What is GROUP BY in SQL, and provide a simple example?
+Ans.GROUP BY in SQL is used to arrange identical data into groups.
+ It is often used with aggregate functions like COUNT, SUM, AVG, etc.,
+ to perform operations on each group of data.
+ ex . SELECT department, COUNT(*)
+      FROM employees
+      GROUP BY department;
+2.What is the difference between GROUP BY and DISTINCT?
+Ans.GROUP BY groups rows that have the same values into summary rows, typically used with aggregate functions. DISTINCT removes duplicate rows from the result set.
+    GROUP BY can aggregate data (e.g., sum, count) based on column values.
+     DISTINCT simply returns unique rows without aggregation.
+     SELECT DISTINCT department
+     FROM employees;
+3.What is HAVING in SQL, and provide a simple example?
+Ans.  HAVING in SQL is used to filter groups created by the GROUP BY clause based on a specified condition,
+  similar to WHERE but for groups.
+  SELECT department, COUNT(*)
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 10;
+4.What is the difference between HAVING and WHERE in SQL?
+WHERE is used to filter rows before grouping occurs.
+HAVING is used to filter groups after the grouping has been performed.
+SELECT *
+FROM employees
+WHERE salary > 50000;
+5.How does SQL execute queries under the hood?
+Ans.SQL executes queries through the following steps:
+
+     Parsing: Breaks down the query into tokens, checks syntax, and validates semantics.
+     Optimization: The query is rewritten and multiple execution plans are evaluated to choose the most efficient one.
+     Execution Plan Generation: A detailed blueprint of the query execution steps is created.
+     Execution:
+    Access Data: Uses table scans or indexes to fetch data.
+     Join Operations: Performs joins if needed.
+
+     Filtering: Applies WHERE conditions.
+
+     Grouping: Groups data if GROUP BY is present.
+
+     Having: Filters groups if HAVING is present.
+
+     Projection: Selects the required columns.
+
+     Result Return: Returns the final result set to the client.
