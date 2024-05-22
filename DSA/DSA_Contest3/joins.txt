@@ -1,0 +1,2 @@
+SELECT c.CustomerID, c.FirstName,c.LastName, o.Total_order_amount FROM Customers c JOIN  Orders o  ON c.CustomerID = o.CustomerID
+ ORDER BY o.Total_order_amount DESC limit 10; 
