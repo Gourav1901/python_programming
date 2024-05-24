@@ -1,0 +1,26 @@
+Input:-
+
+Integer array with the size [n]
+k ( integer )
+Output:- boolean
+
+True : if array contains two elements ( a, b) : a+b=k
+False : else
+
+arr = [5,2,3,4,1]       1,2,3,4,5          k = 3 
+k = 9 
+                                  1 + 2 = 3
+arr.sort()
+
+s = 0 
+e = len(arr)-1
+
+while( s < e):
+    if arr[s] + arr[e] == K:
+      return True
+    elif arr[s] + arr[e] > k:
+         e -= 1
+    else:
+        s += 1       O(n)
+
+
