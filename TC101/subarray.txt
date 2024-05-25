@@ -1,0 +1,14 @@
+Given an input array, check is there any subarray whose sum is equal to k If yes, then return true Else, return false
+
+arr[] = { 1 , 4 , 3, 2 , 5 , 7} , k=9, n=6 [6+5+4+3+2+1 = 21] , n * (n + 1) / 2
+Output : True
+
+arr = [1,4,3,2,5,7]   
+k = 9
+
+for i in range(n):
+   for j in range(i+1,n+1):
+       sub = arr[i:j]
+       if k == sum(sub):
+            return True
+return False
