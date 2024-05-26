@@ -1,0 +1,43 @@
+Give short and concise answer for all the bellow listed questions :
+What is an ER Diagram in Database?
+Ans.An ER (Entity-Relationship) Diagram is a visual representation of the entities
+in a database and the relationships between them.
+
+2.Explain a One to One relationship with an example.
+Ans.A One to One relationship occurs when a single record in one table is linked to a single record in another table.
+Example: A person has one passport, and each passport is assigned to one person.
+
+3.Explain a One to Many relationship with an example.
+Ans.A One to Many relationship occurs when a single record in one table is linked to multiple records in another table. 
+Example: A teacher can teach many students, but each student is taught by one teacher.
+
+4.Explain a Many to Many relationship with an example.
+Ans.A Many to Many relationship occurs when multiple records in one table are linked to multiple records in another table. 
+Example: Students can enroll in many courses, and each course can have many students.
+
+5.What is a Primary key and Foreign Key?
+Ans.A Primary Key is a unique identifier for a record in a table. A Foreign Key is a field in one table that uniquely identifies
+a row in another table, creating a relationship between the two tables.
+
+6.What is JOIN in SQL?
+JOIN in SQL is used to combine rows from two or more tables based on a related column
+ between them.
+
+7.Explain each type of JOIN with a simple example.
+Ans INNER JOIN: Returns records with matching values in both tables.
+     Example SELECT * FROM orders INNER JOIN customers ON orders.customer_id = customers.id;
+    
+LEFT JOIN (LEFT OUTER JOIN): Returns all records from the left table and the matched records from the right table.
+example SELECT * FROM orders LEFT JOIN customers ON orders.customer_id = customers.id;
+
+RIGHT JOIN (RIGHT OUTER JOIN): Returns all records from the right table and the matched records from the left table.
+example SELECT * FROM orders RIGHT JOIN customers ON orders.customer_id = customers.id;
+
+FULL JOIN (FULL OUTER JOIN): Returns all records when there is a match in either left or right table.
+example SELECT * FROM orders FULL JOIN customers ON orders.customer_id = customers.id;
+
+8.What is the difference between Left and Right Join?
+Ans.Left Join: Returns all records from the left table and matched records from the right table
+. Unmatched records from the right table are set to NULL.
+Right Join: Returns all records from the right table and matched records from the left table.
+ Unmatched records from the left table are set to NULL.
