@@ -1,0 +1,196 @@
+-- Problem statement
+-- 1.Retrieve all customers who have a balance of more than $10,000 in their accounts.
+SELECT *
+FROM bank_Customers bc 
+Join Bank_accounts ba ON 
+bc.customerid = ba.customerid
+WHERE Balance > 10000;
+
+-- 2.List all transactions for a given account ID 123.
+SELECT *FROM Bank_Transactions
+WHERE AccountID = 123;
+
+-- 3.Find all employees who work at the branch located at '5330 Andrea Knolls'.
+SELECT
+    e.EmployeeID,
+    e.FirstName,
+    e.LastName,
+    e.Position,
+    e.HireDate,
+    b.BranchName,
+    a.Street,
+    a.City,
+    a.State,
+    a.ZipCode,
+    a.Country
+FROM
+    Bank_Employees e
+    JOIN Bank_Branches b ON e.BranchID = b.BranchID
+    JOIN Bank_Addresses a ON b.AddressID = a.AddressID
+WHERE
+    a.Street = '5330 Andrea Knolls';
+
+-- 4.Get the details of all loans that are still active.
+SELECT
+    *
+FROM
+    Bank_Loans
+WHERE
+    LoanStatus = 'Active';
+
+-- 5.List the total balance of all accounts for each customer.
+SELECT 
+    bc.CustomerID,
+    bc.FirstName,
+    bc.LastName,
+    SUM(ba.Balance) AS TotalBalance
+FROM 
+    bank_Customers bc
+JOIN 
+    Bank_Accounts ba ON bc.CustomerID = ba.CustomerID
+GROUP BY 
+    bc.CustomerID, bc.FirstName, bc.LastName;
+
+-- 6.Retrieve the names of customers along with the branch names where they have their accounts.
+SELECT 
+    BC.FirstName,
+    BC.LastName,
+    BB.BranchName
+FROM 
+    Bank_Customers BC
+JOIN 
+    Bank_Accounts BA ON BC.CustomerID = BA.CustomerID
+JOIN 
+    Bank_Branches BB ON BA.BranchID = BB.BranchID;
+
+
+
+
+-- 7.Find all transactions made between '2023-01-01' and '2023-12-31'.
+SELECT *
+FROM Bank_Transactions
+WHERE TransactionDate BETWEEN '2023-01-01' AND '2023-12-31';
+
+-- 8.List the details of all customers who do not have any accounts.
+SELECT *
+FROM Bank_Customers bc
+LEFT JOIN Bank_Accounts ba ON bc.CustomerID = ba.CustomerID
+WHERE ba.CustomerID IS NULL;
+
+-- 9.Retrieve the number of employees working in each branch.
+SELECT b.BranchID, b.BranchName, COUNT(be.EmployeeID) AS NumEmployees
+FROM Bank_Branches b
+LEFT JOIN Bank_Employees be ON b.BranchID = be.BranchID
+GROUP BY b.BranchID, b.BranchName;
+
+-- 10.Retrieve the customer details along with their account details and branch name.
+SELECT
+    c.CustomerID,
+    c.FirstName,
+    c.LastName,
+    c.SSN,
+    c.BirthDate,
+    c.Email,
+    c.PhoneNumber,
+    a.AccountID,
+    a.AccountType,
+    a.Balance,
+    a.DateOpened,
+    a.Status,
+    b.BranchName
+FROM
+    Bank_Customers c
+    JOIN Bank_Accounts a ON c.CustomerID = a.CustomerID
+    JOIN Bank_Branches b ON a.BranchID = b.BranchID;
+
+-- 11.List all transactions along with the account holder's name and account type.
+SELECT
+    t.TransactionID,
+    t.AccountID,
+    t.Type,
+    t.Amount,
+    t.TransactionDate,
+    a.AccountType,
+    CONCAT(c.FirstName, ' ', c.LastName) AS AccountHolderName
+FROM
+    Bank_Transactions t
+    JOIN Bank_Accounts a ON t.AccountID = a.AccountID
+    JOIN Bank_Customers c ON a.CustomerID = c.CustomerID;
+
+
+-- 12.Find all customers and their loan details along with branch information.
+SELECT
+    c.FirstName,
+    c.LastName,
+    c.SSN,
+    c.BirthDate,
+    c.Email,
+    c.PhoneNumber,
+    a.Street AS AddressStreet,
+    a.City AS AddressCity,
+    a.State AS AddressState,
+    a.ZipCode AS AddressZipCode,
+    a.Country AS AddressCountry,
+    l.LoanID,
+    l.LoanType,
+    l.LoanAmount,
+    l.LoanStatus,
+    l.StartDate,
+    l.EndDate,
+    b.BranchName
+FROM
+    Bank_Customers c
+    LEFT JOIN Bank_Loans l ON c.CustomerID = l.CustomerID
+    LEFT JOIN Bank_Addresses a ON c.AddressID = a.AddressID
+    LEFT JOIN Bank_Branches b ON b.BranchID = a.BranchID;
+
+-- 13.List employees, their branches, and the total number of customers in each branch.
+SELECT
+    e.EmployeeID,
+    e.FirstName,
+    e.LastName,
+    e.Position,
+    e.HireDate,
+    b.BranchID,
+    b.BranchName,
+    COUNT(DISTINCT c.CustomerID) AS TotalCustomers
+FROM
+    Bank_Employees e
+    JOIN Bank_Branches b ON e.BranchID = b.BranchID
+    LEFT JOIN Bank_Customers c ON b.BranchID = c.BranchID
+GROUP BY
+    e.EmployeeID,
+    b.BranchID;
+
+-- 14.List all transactions made to other accounts along with the name of the destination account holder.
+SELECT
+    bt.TransactionID,
+    bt.AccountID,
+    bt.Type,
+    bt.Amount,
+    bt.TransactionDate,
+    bt.DestinationAccountID,
+    CONCAT(bc.FirstName, ' ', bc.LastName) AS DestinationAccountHolder
+FROM
+    Bank_Transactions bt
+    JOIN Bank_Accounts ba ON bt.DestinationAccountID = ba.AccountID
+    JOIN Bank_Customers bc ON ba.CustomerID = bc.CustomerID
+WHERE
+    bt.Type = 'Transfer';
+
+-- 15.Get the details of all transactions along with account and customer details for transactions above $5000.
+SELECT
+    bt.TransactionID,
+    bt.AccountID,
+    bt.Type,
+    bt.Amount,
+    bt.TransactionDate,
+    bt.DestinationAccountID,
+    CONCAT(bc.FirstName, ' ', bc.LastName) AS CustomerName,
+    ba.AccountType
+FROM
+    Bank_Transactions bt
+    JOIN Bank_Accounts ba ON bt.AccountID = ba.AccountID
+    JOIN Bank_Customers bc ON ba.CustomerID = bc.CustomerID
+WHERE
+    bt.Amount > 5000;
