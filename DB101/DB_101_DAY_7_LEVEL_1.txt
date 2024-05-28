@@ -1,0 +1,54 @@
+Give short and concise answer for all the bellow listed questions :
+1.What are subqueries in SQL, and what is their importance?
+Ans. Subqueries in SQL are queries nested within another query,
+used to retrieve data that will be used by the main query. Their importance lies in their ability to simplify complex queries, improve readability,
+and perform operations that would otherwise be difficult or impossible.
+
+2.What are Views in an SQL Database, and what is the importance of a View in a Database?
+Ans.Views in an SQL Database are virtual tables that are based on the result
+set of a SELECT query. The importance of a view in a database lies in its ability
+to provide a layer of abstraction, simplify complex queries, and enhance security
+by restricting access to underlying data.
+
+
+3.What is a Common Table Expression (CTE) in SQL?
+Ans A Common Table Expression (CTE) in SQL is a temporary result set that can be 
+referenced within the scope of a SELECT, INSERT, UPDATE, or DELETE statement.
+It's defined using the WITH clause and is commonly used to simplify complex queries,
+enhance readability, and improve performance.
+
+
+4.What is the "WITH" Clause in SQL?
+Ans.The "WITH" clause in SQL is used to define Common Table Expressions (CTEs).
+It allows you to create named temporary result sets that can be referenced within
+the main query.
+
+5.What is the difference between Tables and Views in SQL?
+Ans.Tables in SQL store data in a structured format, while views are virtual tables
+based on the result set of a SELECT query. Views do not store data themselves but
+provide a way to present data from one or more tables in a customized manner.
+
+6.What is the Difference between CTE and Views in SQL?
+Ans.The main difference between CTEs and Views in SQL is that CTEs are temporary
+ result sets that exist only for the duration of the query execution, while views
+  are stored definitions of queries that can be referenced repeatedly.
+
+
+7.How do you create a view, and how do you use it? Provide a practical example with
+ a query.
+Ans To create a view in SQL, you use the CREATE VIEW statement followed by a name for
+ the view and the SELECT query defining its result set.
+  Here's an example:
+    CREATE VIEW EmployeeNames AS
+    SELECT FirstName, LastName
+    FROM Employees;
+    
+8.How do you create a CTE in SQL? Provide a practical example with a query.
+Ans To create a CTE in SQL, you use the WITH clause followed by a name for the CTE and the SELECT query defining its result set.
+ Here's an example:
+ WITH Sales_CTE AS (
+    SELECT ProductID, SUM(Quantity) AS TotalQuantity
+    FROM Sales
+    GROUP BY ProductID
+)
+SELECT * FROM Sales_CTE;

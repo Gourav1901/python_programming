@@ -1,0 +1,59 @@
+Give short and concise answer for all the bellow listed questions :
+1.What is a Window Function in SQL?
+Window functions are powerful tools that allow you to perform calculations on a set of rows within a result set,
+ defined by a window.
+They differ from aggregate functions (SUM, COUNT, etc.) in that they return a value for each row, not just a 
+single value for the entire group.
+Syntax of Window Functions:
+SELECT column_name, window_function(expression) OVER (window_definition)
+FROM table_name;
+
+2.Explain the use of ROW_NUMBER, RANK, DENSE_RANK.
+these functions assign a rank or order to each row within the window:
+ROW_NUMBER(): Assigns a unique sequential number to each row within the window, regardless of duplicates.
+RANK(): Assigns a rank to each row within the window, but skips ranks for ties (e.g., two rows with the same value 
+might get the same rank).
+DENSE_RANK(): Assigns a rank to each row within the window, but unlike RANK, it does not skip ranks for ties
+ (e.g., consecutive rows with the same value will have the same rank).
+
+3.Explain the use case of FIRST_VALUE, LAST_VALUE, LEAD, LAG.
+FIRST_VALUE(expression): Returns the first value of the expression encountered within the window frame.
+LAST_VALUE(expression): Returns the last value of the expression encountered within the window frame.
+LEAD(expression, offset): Returns the value of the expression offset rows ahead in the window frame (offset can
+ be negative).
+LAG(expression, offset): Returns the value of the expression offset rows behind in the window frame (offset can 
+be negative).
+
+4.What is Normalization in a database?
+Normalization is a systematic approach to organizing data in a relational database to minimize redundancy
+ (data duplication) and improve data integrity, efficiency, and maintainability.
+It involves structuring data into tables with well-defined relationships, adhering to a set of rules called normal 
+forms.
+This process involves dividing large tables into smaller, interrelated tables and defining relationships between 
+them to minimize redundancy and improve data integrity.
+
+5.Explain 1NF, 2NF, 3NF in Normalization.
+Normalization is categorized into several normal forms, each with its own set of rules. The most commonly discussed
+ are:
+First Normal Form (1NF)
+Second Normal Form (2NF)
+Third Normal Form (3NF)
+1NF Level
+Atomic Values: Each cell should contain a single, indivisible value.
+Primary Key: Every table must have a primary key that uniquely identifies each row. It can be a single column or
+ a combination of columns.
+2NF Level
+Follows all 1NF rules.
+Eliminate Partial Dependencies: A non-key column should depend only on the entire primary key, not on a part of it.
+Relationship between tables should be stablished by using Foreign Keys.
+3NF Level
+Follows all 2NF rules.
+Eliminate Transitive Dependencies: A non-key column shouldn't depend on another non-key column that depends on the primary key.
+
+6.How can you convert denormalized to normalized data?
+Converting denormalized data to normalized data involves restructuring the database to reduce redundancy and improve
+ data integrity. This process includes identifying denormalized data, creating normalized tables, defining 
+ relationships between tables using foreign keys, migrating data to the new tables, updating applications to work 
+ with the new structure, and testing the new data model. Normalization helps improve database performance, reduce 
+ storage space, and ensure data consistency. It also makes the database more flexible and easier to maintain in the 
+ long run.
