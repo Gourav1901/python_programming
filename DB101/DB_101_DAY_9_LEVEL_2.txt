@@ -1,0 +1,41 @@
+Problem Statement
+1.Retrieve all the documents.
+ANS  db.emp.find()
+
+2Retrieve the first document.
+db.emp.findOne()n
+
+3.Update the age of the employee to 35 where the first_name is "Sidnee".
+Ans db.emp.updateOne({first_name:"sidnee"}, {$set: {age:35}})
+
+4.Change the salary of "Meredeth Groveham" to 55000.
+Ans.db.emp.updateOne({first_name:"Meredeath", last_name:"Groveham"},{$set: 
+     {salary:5500}})
+
+5.Update the last name of "Nikolaus" to "Park".
+Ans. db.emp.updateOne({first_name:"Nikolus"},{$set:{last_name:"Park"}})
+
+6.Update the salary of all employees to 35000 where the age is 37.
+Ans.db.emp.updateMany({age:37},{$set:{salary:35000}})
+
+7.Update the last name of all the employees to "Jamme" where the age is 28.
+Ans.db.emp.updateMany({age:28},{$set:{last_name:"Jame"}})
+
+8.For all employees named "Kimbra", add a new field middle_name with the value "Marie".
+Ans.db.emp.updateMany({first_name:"Kimbra"},{$set:{middle_name:"Marie"}})
+
+9.Find all users who are 33 years old.
+Ans.db.emp.find({age:33})
+
+10.Retrieve documents for users with a salary greater than 50000.
+Ans.db.emp.find({salary:{$gt:5000}})
+
+11.Find all the users where the gender is Female and age is 79.
+Ans.db.emp.find({gender:"Female",age:79})
+
+12.Find all the employees where the first_name is "George" and gender is Male.
+Ans.db.emp.find({ first_name: "George", gender: "Male" })
+
+13.Find all users whose salary is less than or equal to 50000.
+Ans.db.emp.find({salary:{$lte:5000}})
+
