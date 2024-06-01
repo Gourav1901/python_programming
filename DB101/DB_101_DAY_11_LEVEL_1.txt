@@ -1,0 +1,24 @@
+How many hotels have a rating of 4 or higher?
+Ans.db.oyo.aggregate([{$match:{rating:{$gte:4}}},{$count:"high_rating_hotels"}])
+
+2.Retrieve the names and addresses of the first 5 hotels sorted by final cost in ascending order.
+Ans.db.oyo.aggregate()
+Ans.db.oyo.find({})
+How can you skip the first 10 hotels and then retrieve the next 5 hotels when sorted by rating in descending order
+Find the names and ratings of hotels, sorting them in descending order of ratings and limiting the results to 10.
+Retrieve only the names and addresses of all hotels.
+How do you get the list of amenities and room sizes available in hotels without including their IDs?
+Can you display only the final cost and category for all hotels?
+List the names of hotels along with their images.
+How can you find hotels where the final cost is greater than the base cost by at least 100?
+Retrieve hotels where the number of amenities is exactly 3.
+Find hotels that offer both "WiFi" and "AC" amenities.
+Which hotels have either "TV" or "AC" as amenities?
+Match hotels with a rating of 5.
+Match hotels located in "Telangana".
+Limit to the first 3 hotels when retrieving data.
+How do you limit results to the 2 highest-rated hotels?
+Sort hotels by their base cost in descending order.
+Sort hotels by name alphabetically.
+Skip the top 5 hotels based on rating.
+Skip the first 2 hotels when displaying results.
