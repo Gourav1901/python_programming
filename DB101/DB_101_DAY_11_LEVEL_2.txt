@@ -1,0 +1,150 @@
+How can you find hotels ordered by their rating in descending order?
+db.oyo.aggregate([
+    { $sort: { rating: -1 } }
+]);
+
+What query would list hotels sorted by their base cost in ascending order?
+db.oyo.aggregate([
+    { $sort: { base_cost: 1 } }
+]);
+
+Can you sort hotels by the number of amenities they offer, from most to least?
+db.oyo.aggregate([
+    { $project: { name: 1, amenities: 1, amenities_count: { $size: "$amenities" } } },
+    { $sort: { amenities_count: -1 } }
+]);
+
+How would you order hotels by their final cost in descending order, for those located in Telangana?
+db.oyo.aggregate([
+    { $match: { address: /Telangana/ } },
+    { $sort: { final_cost: -1 } }
+]);
+
+What is the query to find the top 3 highest-rated hotels in Adilabad?
+db.oyo.aggregate([
+    { $match: { address: /Adilabad/ } },
+    { $sort: { rating: -1 } },
+    { $limit: 3 }
+]);
+
+How can you identify the 2 cheapest hotels offering "WiFi" as an amenity, sorted by base cost?
+db.oyo.aggregate([
+    { $match: { amenities: "WiFi" } },
+    { $sort: { base_cost: 1 } },
+    { $limit: 2 }
+]);
+
+Can you find the top 5 most expensive hotels, sorted by their final cost in descending order?
+db.oyo.aggregate([
+    { $sort: { final_cost: -1 } },
+    { $limit: 5 }
+]);
+
+How would you query for the next 5 hotels after skipping the top 5, based on their ratings in descending order?
+db.oyo.aggregate([
+    { $sort: { rating: -1 } },
+    { $skip: 5 },
+    { $limit: 5 }
+]);
+
+Can you list 3 hotels offering "AC" as an amenity, skipping the first 2 cheapest options, sorted by base cost ascending?
+db.oyo.aggregate([
+    { $match: { amenities: "AC" } },
+    { $sort: { base_cost: 1 } },
+    { $skip: 2 },
+    { $limit: 3 }
+]);
+
+What is the query to find 4 hotels categorized as "Good", skipping the top 3 based on final cost in descending order?
+db.oyo.aggregate([
+    { $match: { category: "Good" } },
+    { $sort: { final_cost: -1 } },
+    { $skip: 3 },
+    { $limit: 4 }
+]);
+
+11.Write a MongoDB query to find hotels that have at least a 4 rating, have been rated by more than 10 users, and offer both "Geyser" and "Daily housekeeping". Include the hotel name, rating, and amenities in the results, sorted by the number of users who rated the hotel in descending order, and exclude the _id field.
+db.oyo.aggregate([
+    { $match: { rating: { $gte: 4 }, number_of_ratings: { $gt: 10 }, amenities: { 
+      $all: ["Geyser", "Daily housekeeping"] } } },
+    { $project: { name: 1, rating: 1, amenities: 1, _id: 0 } },
+    { $sort: { number_of_ratings: -1 } }
+]);
+
+12.Write an aggregation query to group hotels by their rating and calculate the average final cost for each rating group. Include only ratings where the average final cost is greater than 800. The result should include the rating and the average final cost, sorted by the average final cost in descending order.
+db.oyo.aggregate([
+    { $group: { _id: "$RATING", average_final_cost: { $avg: "$FINAL_COST" } } },
+    { $match: { average_final_cost: { $gt: 800 } } },
+    { $sort: { average_final_cost: -1 } }
+]);
+
+
+13.Write a MongoDB query to find hotels where the final cost is at least 10% higher than the base cost and the rating is at least 3.7. The result should include the hotel name, base cost, final cost, and rating, sorted by final cost in ascending order, and exclude the _id field.
+db.oyo.aggregate([
+    { $match: { $expr: { $gte: [{ $subtract: ["$FINAL_COST", "$BASE_COST"] }, { $multiply: ["$BASE_COST", 0.1] }] }, RATING: { $gte: 3.7 } } },
+    { $project: { NAME: 1, BASE_COST: 1, FINAL_COST: 1, RATING: 1, _id: 0 } },
+    { $sort: { FINAL_COST: 1 } }
+]);
+
+14.Write an aggregation query to find the names and final costs of the top 5 highest-rated hotels that offer both "Geyser" and "Power backup". Skip the first 3 results and include only the hotel name and final cost in the output, sorted by rating in descending order.
+db.oyo.aggregate([
+    { $match: { RATING: { $gt: 3.5 } } },
+    { $sort: { FINAL_COST: -1 } },
+    { $skip: 2 },
+    { $limit: 5 },
+    { $project: { NAME: 1, ADDRESS: 1, RATING: 1, DISCOUNT: { $subtract: ["$BASE_COST", "$FINAL_COST"] }, _id: 0 } }
+]);
+
+15.Find all hotels with a rating greater than 3.5, sort by final cost in descending order, then limit to 5 results and skip the first 2. Project the name, address, and rating. Finally, add a field "DISCOUNT" showing the difference between the base cost and final cost.
+db.oyo.aggregate([
+    { $match: { AMENITYS: { $all: ["Free Wifi", "AC"] } } },
+    { $sort: { BASE_COST: 1 } },
+    { $skip: 1 },
+    { $limit: 5 },
+    { $project: { NAME: 1, ADDRESS: 1, BASE_COST: 1, COST_PER_SQFT: { $divide: ["$FINAL_COST", { $toInt: { $substr: ["$ROOM SIZE", 10, -1] } }] }, _id: 0 } }
+]);
+
+16.Find hotels that have amenities including both "Free Wifi" and "AC". Sort by base cost in ascending order, limit to 5 results, and skip the first 1. Project the name, address, and base cost. Then, calculate the "COST_PER_SQFT" by dividing the final cost by room size (in sqft).
+db.oyo.aggregate([
+    { $match: { AMENITYS: { $all: ["Free Wifi", "AC"] } } },
+    { $sort: { BASE_COST: 1 } },
+    { $skip: 1 },
+    { $limit: 5 },
+    { $project: { NAME: 1, ADDRESS: 1, BASE_COST: 1, COST_PER_SQFT: { $divide: ["$FINAL_COST", { $toInt: { $substr: ["$ROOM SIZE", 10, -1] } }] }, _id: 0 } }
+]);
+
+17.Find hotels with at least 10 ratings, sort by rating in descending order, limit to 3 results, and skip the first 1. Project the name, address, and rating. Then, calculate the average cost by averaging base cost and final cost.
+db.oyo.aggregate([
+    { $match: { ADDRESS: /Agra/ } },
+    { $sort: { RATING: 1 } },
+    { $skip: 2 },
+    { $limit: 5 },
+    { $project: { NAME: 1, ADDRESS: 1, RATING: 1, TOTAL_COST: { $sum: ["$BASE_COST", "$FINAL_COST"] }, _id: 0 } }
+]);
+
+18.Find hotels located in "Agra", sort by their rating in ascending order, limit to 5 results, and skip the first 2. Project the name, address, and rating. Add a field "TOTAL_COST" which is the sum of base cost and final cost.
+db.oyo.aggregate([
+    { $match: { ADDRESS: /Agra/ } },
+    { $sort: { RATING: 1 } },
+    { $skip: 2 },
+    { $limit: 5 },
+    { $project: { NAME: 1, ADDRESS: 1, RATING: 1, TOTAL_COST: { $sum: ["$BASE_COST", "$FINAL_COST"] }, _id: 0 } }
+]);
+
+19.Find hotels with a final cost between 500 and 1000, sort by rating in descending order, limit to 4 results, and skip the first 1. Project the name, address, and final cost. Then, add a field "COST_DIFFERENCE" which is the absolute difference between base cost and final cost.
+db.oyo.aggregate([
+    { $match: { FINAL_COST: { $gte: 500, $lte: 1000 } } },
+    { $sort: { RATING: -1 } },
+    { $skip: 1 },
+    { $limit: 4 },
+    { $project: { NAME: 1, ADDRESS: 1, FINAL_COST: 1, COST_DIFFERENCE: { $abs: { $subtract: ["$BASE_COST", "$FINAL_COST"] } }, _id: 0 } }
+]);
+
+20.Find hotels with a room size of exactly "100 sqft" and amenities including "AC" and "TV". Sort by final cost in ascending order, limit to 5 results, and skip the first 2. Project the name, address, and room size. Add a field "COST_PER_RATING_POINT" which is the final cost divided by the rating.
+db.oyo.aggregate([
+    { $match: { 'ROOM SIZE': "Room size: 100 sqft", AMENITYS: { $all: ["AC", "TV"] } } },
+    { $sort: { FINAL_COST: 1 } },
+    { $skip: 2 },
+    { $limit: 5 },
+    { $project: { NAME: 1, ADDRESS: 1, 'ROOM SIZE': 1, COST_PER_RATING_POINT: { $divide: ["$FINAL_COST", "$RATING"] }, _id: 0 } }
+]);
