@@ -1,0 +1,132 @@
+Problem Statement set 1
+Write query to find the average rating of hotels categorized as "Good" along with their names, but only for those which have been rated by more than 5 people?
+db.oyo.aggregate([
+    { $match: { CATEGORY: "Good", "RATED BY": { $gt: 5 } } },
+    { $group: { _id: null, avgRating: { $avg: "$RATING" }, hotelNames: { $push: "$NAME" } } }
+]);
+
+Write query to find the total count of amenities provided by hotels in Telangana with a rating above 4?
+db.oyo.aggregate([
+    { $match: { ADDRESS: /Telangana/, RATING: { $gt: 4 } } },
+    { $unwind: "$AMENITYS" },
+    { $group: { _id: null, totalAmenities: { $sum: 1 } } }
+]);
+
+Write query to determine the minimum and maximum room sizes of hotels under the "OYO Flagship" category, displaying their names and final costs?
+db.oyo.aggregate([
+    { $match: { CATEGORY: "OYO Flagship" } },
+    { $group: { _id: "$NAME", minRoomSize: { $min: { $toInt: { $substr: ["$ROOM SIZE", 10, -5] } } }, maxRoomSize: { $max: { $toInt: { $substr: ["$ROOM SIZE", 10, -5] } } }, finalCost: { $first: "$FINAL_COST" } } }
+]);
+
+Write query to calculate the average final cost of hotels with amenities including "WiFi" and "AC", displaying the name and average final cost?
+db.oyo.aggregate([
+    { $match: { AMENITYS: { $all: ["WiFi", "AC"] } } },
+    { $group: { _id: null, avgFinalCost: { $avg: "$FINAL_COST" }, hotelNames: { $push: "$NAME" } } }
+]);
+
+Write query to find top 5 highest-rated hotels in Telangana, including their names, ratings, and final costs?
+db.oyo.aggregate([
+    { $match: { ADDRESS: /Telangana/ } },
+    { $sort: { RATING: -1 } },
+    { $limit: 5 },
+    { $project: { _id: 0, NAME: 1, RATING: 1, FINAL_COST: 1 } }
+]);
+
+Write query to list the 3 most expensive hotels in Adilabad, showing their names, room sizes, and final costs?
+db.oyo.aggregate([
+    { $match: { ADDRESS: /Adilabad/ } },
+    { $sort: { FINAL_COST: -1 } },
+    { $limit: 3 },
+    { $project: { _id: 0, NAME: 1, "ROOM SIZE": 1, FINAL_COST: 1 } }
+]);
+
+Write query to identify the 2 cheapest hotels offering both "WiFi" and "AC" amenities, including their names and base costs?
+db.oyo.aggregate([
+    { $match: { AMENITYS: { $all: ["WiFi", "AC"] } } },
+    { $sort: { BASE_COST: 1 } },
+    { $limit: 2 },
+    { $project: { _id: 0, NAME: 1, BASE_COST: 1 } }
+]);
+
+Write query to find the average rating of hotels by each amenity offered, focusing on hotels with more than one amenity?
+db.oyo.aggregate([
+    { $match: { AMENITYS: { $gt: 1 } } },
+    { $unwind: "$AMENITYS" },
+    { $group: { _id: "$AMENITYS", avgRating: { $avg: "$RATING" } } }
+]);
+
+Write query to find the total number of hotels offering each type of room size, only considering hotels with a "Good" category?
+db.oyo.aggregate([
+    { $match: { CATEGORY: "Good" } },
+    { $group: { _id: "$ROOM SIZE", count: { $sum: 1 } } }
+]);
+
+Write query to determine the total final cost collected from hotels based on each category, specifically for those with a rating above 3?
+db.oyo.aggregate([
+    { $match: { RATING: { $gt: 3 } } },
+    { $group: { _id: "$CATEGORY", totalFinalCost: { $sum: "$FINAL_COST" } } }
+]);
+
+Problem Statement set 2
+Identify the most cost-effective laptop brand for high-performance processors (Core i7, Core i9, Ryzen 7, etc.) by comparing the average price and average rating of laptops with these processors. Include detailed statistics on the distribution of ratings.
+db.laptops.aggregate([
+  { $match: { $or: [ { processor_tier: "Core i7" }, { processor_tier: "Core i9" }, { processor_tier: "Ryzen 7" } ] } },
+  { $group: { _id: "$brand", avgPrice: { $avg: "$Price" }, avgRating: { $avg: "$Rating" }, ratings: { $push: "$Rating" } } },
+  { $addFields: { ratingStats: { min: { $min: "$ratings" }, max: { $max: "$ratings" }, count: { $size: "$ratings" } } } },
+  { $sort: { avgPrice: 1 } }
+]);
+
+
+Determine the overall market segmentation for laptops based on display size and resolution. Analyze the data to find the average price, rating, and storage capacity for each segment.
+db.laptops.aggregate([
+  { $group: { _id: { displaySize: "$display_size", resolution: { width: "$resolution_width", height: "$resolution_height" } }, 
+              avgPrice: { $avg: "$Price" }, avgRating: { $avg: "$Rating" }, avgStorageCapacity: { $avg: "$primary_storage_capacity" } } }
+]);
+
+
+Analyze the performance-to-price ratio of laptops by brand. Calculate this ratio by dividing the rating by the price for each laptop, and then find the average ratio for each brand. Identify which brand offers the best value.
+db.laptops.aggregate([
+  { $addFields: { performancePriceRatio: { $divide: [ "$Rating", "$Price" ] } } },
+  { $group: { _id: "$brand", avgPerformancePriceRatio: { $avg: "$performancePriceRatio" } } },
+  { $sort: { avgPerformancePriceRatio: -1 } }
+]);
+
+Identify the top three brands offering the highest-rated laptops with SSD storage only. Consider the laptops with a primary storage capacity of 512GB or more and provide insights into their pricing trends.
+db.laptops.aggregate([
+  { $match: { primary_storage_type: "SSD", primary_storage_capacity: { $gte: 512 } } },
+  { $sort: { Rating: -1 } },
+  { $group: { _id: "$brand", laptops: { $push: "$$ROOT" } } },
+  { $project: { brand: 1, laptops: { $slice: [ "$laptops", 3 ] } } }
+]);
+
+Evaluate the correlation between the number of processor cores and the laptop price. Group the data by the number of cores and calculate the average price, rating, and RAM capacity for each group.
+db.laptops.aggregate([
+  { $group: { _id: "$num_cores", avgPrice: { $avg: "$Price" }, avgRating: { $avg: "$Rating" }, avgRAMCapacity: { $avg: "$ram_memory" } } }
+]);
+
+Determine the market trends for laptops with integrated GPUs. Compare the average price, rating, and primary storage capacity across different processor tiers (Core i3, Core i5, Core i7, Ryzen 3, Ryzen 5, etc.) for laptops with integrated GPUs.
+db.laptops.aggregate([
+  { $match: { gpu_type: "integrated" } },
+  { $group: { _id: "$processor_tier", avgPrice: { $avg: "$Price" }, avgRating: { $avg: "$Rating" }, avgStorageCapacity: { $avg: "$primary_storage_capacity" } } }
+]);
+
+Assess the impact of RAM capacity on laptop prices and ratings. Group laptops by RAM capacity and analyze the average price and rating for each group. Identify any significant trends or outliers.
+db.laptops.aggregate([
+  { $group: { _id: "$ram_memory", avgPrice: { $avg: "$Price" }, avgRating: { $avg: "$Rating" } } }
+]);
+
+Investigate the price and rating distribution for gaming laptops. Identify which brands are leading in the gaming laptop market by comparing the average price, rating, GPU type, and RAM capacity for laptops categorized as gaming.
+db.laptops.aggregate([
+  { $match: { category: "gaming" } },
+  { $group: { _id: "$brand", avgPrice: { $avg: "$Price" }, avgRating: { $avg: "$Rating" } } }
+]);
+
+Analyze the warranty periods offered by different brands and their correlation with laptop prices and ratings. Identify any patterns or insights regarding how warranty periods influence consumer ratings and pricing strategies.
+db.laptops.aggregate([
+  { $group: { _id: "$brand", avgPrice: { $avg: "$Price" }, avgRating: { $avg: "$Rating" }, avgWarrantyPeriod: { $avg: "$year_of_warranty" } } }
+]);
+
+Examine the relationship between processor brand (Intel, AMD, Apple) and laptop price, rating, and primary storage capacity. Group the laptops by processor brand and compare their average price, rating, and storage statistics to identify key differences.
+db.laptops.aggregate([
+  { $group: { _id: "$processor_brand", avgPrice: { $avg: "$Price" }, avgRating: { $avg: "$Rating" }, avgStorageCapacity: { $avg: "$primary_storage_capacity" } } }
+]);
