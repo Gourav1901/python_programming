@@ -1,0 +1,49 @@
+1.Write query Using $group with a null grouping key, how can we find the average rating across all documents?
+db.oyo.aggregate([
+    { $group: { _id: null, avgRating: { $avg: "$RATING" } } }
+]);
+
+2.Write query to group documents by the RATING to see how many hotels have the same rating?
+db.oyo.aggregate([
+    { $group: { _id: "$RATING", count: { $sum: 1 } } }
+]);
+
+3.Write query to group documents by RATING and use $push to gather all ADDRESSes of hotels for each rating level?
+db.oyo.aggregate([
+    { $group: { _id: "$RATING", addresses: { $push: "$ADDRESS" } } }
+]);
+
+Write query to group documents by RATING and include all details of the hotels (entire documents) using $$ROOT?
+db.oyo.aggregate([
+    { $group: { _id: "$RATING", hotels: { $push: "$$ROOT" } } }
+]);
+
+Write query to group hotels by their RATING and count the number of hotels at each rating level?
+db.oyo.aggregate([
+    { $group: { _id: "$RATING", count: { $sum: 1 } } }
+]);
+
+Write query to find the maximum, minimum, and average FINAL_COST of hotels grouped by CATEGORY?
+db.oyo.aggregate([
+    { $group: { _id: "$CATEGORY", maxFinalCost: { $max: "$FINAL_COST" }, minFinalCost: { $min: "$FINAL_COST" }, avgFinalCost: { $avg: "$FINAL_COST" } } }
+]);
+
+Write query to group hotels by RATING and calculate the maximum, minimum, and average BASE_COST for each rating level?
+db.oyo.aggregate([
+    { $group: { _id: "$RATING", maxBaseCost: { $max: "$BASE_COST" }, minBaseCost: { $min: "$BASE_COST" }, avgBaseCost: { $avg: "$BASE_COST" } } }
+]);
+
+Write query using $project to show only the NAME, ADDRESS, and FINAL_COST of each hotel?
+db.oyo.aggregate([
+    { $project: { NAME: 1, ADDRESS: 1, FINAL_COST: 1, _id: 0 } }
+]);
+
+Write query using $unwind to separate each AMENITYS item into its own document for further analysis?
+db.oyo.aggregate([
+    { $unwind: "$AMENITYS" }
+]);
+
+Write query to add a new field DISCOUNT to each document, showing the difference between BASE_COST and FINAL_COST?
+db.oyo.aggregate([
+    { $addFields: { DISCOUNT: { $subtract: ["$BASE_COST", "$FINAL_COST"] } } }
+]);
