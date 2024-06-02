@@ -2,23 +2,109 @@ How many hotels have a rating of 4 or higher?
 Ans.db.oyo.aggregate([{$match:{rating:{$gte:4}}},{$count:"high_rating_hotels"}])
 
 2.Retrieve the names and addresses of the first 5 hotels sorted by final cost in ascending order.
-Ans.db.oyo.aggregate()
-Ans.db.oyo.find({})
-How can you skip the first 10 hotels and then retrieve the next 5 hotels when sorted by rating in descending order
-Find the names and ratings of hotels, sorting them in descending order of ratings and limiting the results to 10.
-Retrieve only the names and addresses of all hotels.
-How do you get the list of amenities and room sizes available in hotels without including their IDs?
-Can you display only the final cost and category for all hotels?
-List the names of hotels along with their images.
-How can you find hotels where the final cost is greater than the base cost by at least 100?
-Retrieve hotels where the number of amenities is exactly 3.
-Find hotels that offer both "WiFi" and "AC" amenities.
-Which hotels have either "TV" or "AC" as amenities?
-Match hotels with a rating of 5.
-Match hotels located in "Telangana".
-Limit to the first 3 hotels when retrieving data.
-How do you limit results to the 2 highest-rated hotels?
-Sort hotels by their base cost in descending order.
-Sort hotels by name alphabetically.
-Skip the top 5 hotels based on rating.
-Skip the first 2 hotels when displaying results.
+db.oyo.aggregate([
+    { $project: { name: 1, address: 1, _id: 0 } },
+    { $sort: { final_cost: 1 } },
+    { $limit: 5 }
+]);
+
+3.How can you skip the first 10 hotels and then retrieve the next 5 hotels when sorted by rating in descending order
+db.oyo.aggregate([
+    { $sort: { rating: -1 } },
+    { $skip: 10 },
+    { $limit: 5 },
+    { $project: { name: 1, address: 1, rating: 1, _id: 0 } }
+]);
+
+4.Find the names and ratings of hotels, sorting them in descending order of ratings and limiting the results to 10.
+db.oyo.aggregate([
+    { $project: { name: 1, rating: 1, _id: 0 } },
+    { $sort: { rating: -1 } },
+    { $limit: 10 }
+]);
+
+5.Retrieve only the names and addresses of all hotels.
+db.oyo.aggregate([
+    { $project: { name: 1, address: 1, _id: 0 } }
+]);
+
+6.How do you get the list of amenities and room sizes available in hotels without including their IDs?
+db.oyo.aggregate([
+    { $project: { amenities: 1, room_size: 1, _id: 0 } }
+]);
+
+7.Can you display only the final cost and category for all hotels?
+db.oyo.aggregate([
+    { $project: { final_cost: 1, category: 1, _id: 0 } }
+]);
+
+8.List the names of hotels along with their images.
+db.oyo.aggregate([
+    { $project: { name: 1, image: 1, _id: 0 } }
+]);
+
+9.How can you find hotels where the final cost is greater than the base cost by at least 100?
+db.oyo.aggregate([
+    { $match: { $expr: { $gte: [{ $subtract: ["$final_cost", "$base_cost"] }, 100] } } }
+]);
+
+10.Retrieve hotels where the number of amenities is exactly 3.
+db.oyo.aggregate([
+    { $match: { $expr: { $eq: [{ $size: "$amenities" }, 3] } } }
+]);
+
+11.Find hotels that offer both "WiFi" and "AC" amenities.
+db.oyo.aggregate([
+    { $match: { amenities: { $all: ["WiFi", "AC"] } } }
+]);
+
+12.Which hotels have either "TV" or "AC" as amenities?
+db.oyo.aggregate([
+    { $match: { amenities: { $in: ["TV", "AC"] } } }
+]);
+
+13.Match hotels with a rating of 5.
+db.oyo.aggregate([
+    { $match: { rating: 5 } }
+]);
+
+14.Match hotels located in "Telangana".
+db.oyo.aggregate([
+    { $match: { address: /Telangana/ } }
+]);
+
+15.Limit to the first 3 hotels when retrieving data.
+db.oyo.aggregate([
+    { $limit: 3 }
+]);
+
+16.How do you limit results to the 2 highest-rated hotels?
+db.oyo.aggregate([
+    { $sort: { rating: -1 } },
+    { $limit: 2 }
+]);
+
+17.Sort hotels by their base cost in descending order.
+db.oyo.aggregate([
+    { $sort: { base_cost: -1 } }
+]);
+
+
+
+18.Sort hotels by name alphabetically.
+db.oyo.aggregate([
+    { $sort: { name: 1 } }
+]);
+
+
+19.Skip the top 5 hotels based on rating.
+db.oyo.aggregate([
+    { $sort: { rating: -1 } },
+    { $skip: 5 }
+]);
+
+
+20.Skip the first 2 hotels when displaying results.
+db.oyo.aggregate([
+    { $skip: 2 }
+]);
