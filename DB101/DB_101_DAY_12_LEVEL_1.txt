@@ -1,0 +1,63 @@
+Write query to group all documents in the collection without specifying a grouping key, to count the total number of documents?
+db.oyo.aggregate([
+    { $group: { _id: null, totalDocuments: { $sum: 1 } } }
+]);
+
+Write query to group documents by the CATEGORY field to count the number of hotels in each category?
+db.oyo.aggregate([
+    { $group: { _id: "$CATEGORY", numberOfHotels: { $sum: 1 } } }
+]);
+
+Write query to group hotels by CATEGORY and use $push to create an array of all hotel names within each category?
+db.oyo.aggregate([
+    { $group: { _id: "$CATEGORY", hotelNames: { $push: "$NAME" } } }
+]);
+
+Write query to group hotels by CATEGORY and include the entire document for each hotel in the results using $$ROOT?
+db.oyo.aggregate([
+    { $group: { _id: "$CATEGORY", hotels: { $push: "$$ROOT" } } }
+]);
+
+Write query to group documents by CATEGORY and count the number of hotels in each category using {$sum: 1}?
+db.oyo.aggregate([
+    { $group: { _id: "$CATEGORY", numberOfHotels: { $sum: 1 } } }
+]);
+
+Write query to determine the maximum, minimum, and average room size (assuming room size can be parsed as a number) across all hotels?
+db.oyo.aggregate([
+    { $project: { roomSize: { $toInt: { $substr: ["$ROOM SIZE", 10, -1] } } } },
+    { $group: {
+        _id: null,
+        maxRoomSize: { $max: "$roomSize" },
+        minRoomSize: { $min: "$roomSize" },
+        avgRoomSize: { $avg: "$roomSize" }
+    }}
+]);
+
+Write query to Grouping by CATEGORY, how can we find the hotel with the highest RATING in each category?
+db.oyo.aggregate([
+    { $sort: { RATING: -1 } },
+    { $group: {
+        _id: "$CATEGORY",
+        highestRatedHotel: { $first: "$$ROOT" }
+    }}
+]);
+
+Write query to use $project to include the NAME, RATING, and a calculated field showing the difference between FINAL_COST and BASE_COST?
+db.oyo.aggregate([
+    { $project: {
+        NAME: 1,
+        RATING: 1,
+        costDifference: { $subtract: ["$FINAL_COST", "$BASE_COST"] }
+    }}
+]);
+
+Write query by Using $unwind, how can we expand the IMAGES array to work with each image URL in separate documents?
+db.oyo.aggregate([
+    { $unwind: "$IMAGES" }
+]);
+
+Write query to use $addField to add a field in all the document with name "onboardStatus" and value as true
+db.oyo.aggregate([
+    { $addFields: { onboardStatus: true } }
+]);
