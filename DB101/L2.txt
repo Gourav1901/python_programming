@@ -1,0 +1,31 @@
+w a query to match with the tag"psschology", project the title and price, and sort by price in ascending order
+Ans.db.books.find({tags:"psychology"},{title:1,price:1,_id:0}).sort({price:1})
+2.Write a query to match books publish after 2010 , project the title and author, and sort by publish year in descending order.
+Ans db.books.find({publicationYear:{$gt:2010}},{title:1,author:1,_id:0}).sort({publicationYear:-1})
+3.Write a query to match books with a price greater than 700
+sort by price in desc, and project only the title and price
+Ans.db.books.find({price:{$gt:700}},{title:1,price:1,_id:0}).sort({price:-1});
+
+4.Write a query to match books with tag "self_jelp sort by publication year in ascending order project the title and publication year
+Ans.db.books.find({tags:"self-help"},{title:1,publicationYear:1,_id:0}).sort({publicationYear:1});
+
+5.Write a query to group by publisher, sort by number of books
+in desc order, and project the publication and book count
+Ans db.books.aggregate([{$group:{_id:"$metadata.publisher",bookCount:{$sum:1}}},{$sort:{bookCount:-1}},{$project:{publisher:"$_id",bookCount:1,_id:0}}])
+
+6.write a query to group by author . sort by the number of books in 
+desc order and project the author and book count
+Ans.db.books.aggregate([{$group:{_id:$author,bookCount:{$sum:1}}},{$sort:{bookCount:1}},{$project:{author:"$_id",bookCount:1,_id:0}}]);
+
+7write a query to match books pulish after 2010
+ans.db.books.aggregate([{$match:{publicationYear:{$gt:2010}}},{$group:{_id:"$author",totalBooks:{$sum:1}}},{$project:{author:"$_id".totalBooks:1,_id:0}}]);
+
+8 write a query to match books with the tags "leadership"
+,group by author  and totalBooks.
+An. db.books.aggregate([{$match:{tags:"leadership"}},{$group:{_id:"metadata.publisher",averagePrice:{$avg:"$price"}}},{$project:{publisher:"$_id",averagePrice:1,_id:0}}]);
+
+9.to remove the "dimentions"
+Ans.db.books.updateOne({title:"Grit:The Power of Passion and Perseverance"},{$unset:{"metadata.dimentions":""}});
+
+10rename the pages to pageCount 
+Ans db.books.updateOne({title:"The lean Startup"},{$rename:{"metadata.pages":"metadata.pageCount"}});

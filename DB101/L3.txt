@@ -1,0 +1,82 @@
+Analyze the tag distribution across the entire inventory.Provide the tag names and the number of books ...
+Ans.db.books.aggregate([
+  {$unwind:"$tags"},
+  {$group:{_id:"$tags",bookCount:1{$sum:1}}},
+  {$sort:{bookCount:-1}},
+  {$project:{tag:"$_id",bookCount:1,_id:0}}
+]);
+
+2 Evaluate the presence of each author in the invetory by their.....
+Ans.db.books.aggregate([
+  {$unwind:"$tags"},
+  {$group:{_id:{author:"$author",tag:"$tags"}}},
+  {$group:{_id:"$_id.author",tagCount:{$sum:1}}},
+  {$sort:{tagCount:-1}},
+  {$project:{author:"$_id",tagCount:1,_id:0}}
+]);
+
+3.identify the most popular tags books published after 2010....
+Ans.db.books.aggregate([
+  {$match:{publicationYear:{$gt:2010}}},
+  {$unwind:"$tags"},
+  {$group:{_id:"$tags",bookCount:{$sum:1}}},
+  {$sort:{bookCount:-1}},
+  {$limit:5},
+  {$project:{tag:"$_id",bookCount:1,_id:0}}
+]);
+
+4.Inestigate the most frequent tags used by authors with more than one book in the inventory.......
+Ans.
+
+
+5.Determine the most recent books in the inventory...
+Ans.db.books.aggregate([{$project:{title:1, publicationYear:1,isRecent:{$cond:{
+  if:{$gte:["publicationYear",new Date().getFullYear()-5]},
+  then:true,
+  else:false
+}},_id:0}},{$sort:{publicationYear:-1}}]);
+
+6.perform a comprehensive analysis of books....
+db.books.aggregate([
+  {$match:{publicationYear:{$gte: new Date().getFullYear()-10}}},
+  {$project:{
+    title:1,
+    author:1,
+    price:1,
+    discountedPrice:{$multiply:["$price",0.9]},
+    _id:0
+  }},
+  {$limit:10}
+])
+
+7.Generate a report on books from a specific publisher,including the book ......
+Ans.var publicationName = "specific.Publisher":
+db.book.aggregate([
+  {$match:{publisher:publicationName}},
+  {$project:{
+    title:1,
+    author:1,
+    publicationYear:1,
+    is21stCentury:{$gte:["$publicationYear",2000]},
+     _id:0
+  }},
+  {$sort:{publicationYear:1}},
+  {$limit:5}
+]);
+
+8.perfrom a comprehensive>.....
+Ans.db.books.aggregate([
+  {$match:{$price:{$gt:600}}},
+  {$unwind:"$tags"},
+  {$group:{
+    _id:"$tags",
+    bookCount:{$sum:1},
+    averagePrice:{$avg:"price"}
+  }},
+  {$addFields:{isAveragePriceAbove800:{$gte:["$averagePrice":800]}},
+  {$sort:{bookCount-1}}
+  {$limit:3},
+  {$project:{tag:"$_id",bookCount:1,
+  averagePrice:1,isAveragePriceAbove800:1,
+  _id:0}}}
+]);
