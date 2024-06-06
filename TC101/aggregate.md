@@ -47,3 +47,60 @@ db.collection.aggragate([{$match:
 {$sort:{$rating:-1}}
 }
 }])
+
+
+
+orders    customer
+ID               on Id 
+                   
+customerd         custimerID
+orderId             name email
+product 
+quantity
+
+db.orders.aggregate([
+  $lockups:{
+    localfeild:customerID,
+    Foregien customerID,
+
+  }
+])
+
+
+db.orders.aggregate([
+  {$lockup:{
+    from:"customer_id",
+    localField:"customer_id",
+    as:"customerDetails"
+   }
+  },
+  {
+    $unwind:""
+  }
+])
+
+
+
+
+
+orders     customers
+
+id           id
+orderid      customerId
+customerid   name 
+product     email
+quantity
+
+
+db.orders.aggragte([
+  {$lookup{
+    from:"orders",
+    localField:"customerid",
+    ForeignField:"customerid",
+
+  }
+  AS:"$customerDetails"
+  }
+
+  {$unwind:"$customerDetails"}
+])
