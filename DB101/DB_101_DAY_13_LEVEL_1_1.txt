@@ -1,0 +1,162 @@
+Problem Statement
+1.Find the count of movies released in each year.
+db.movies.aggregate([
+  {
+    $group: {
+      _id: { $year: "$release_date" },
+      count: { $sum: 1 }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      movieCount: "$count"
+    }
+  }
+])
+
+
+2.List movies and their release month, including the movie title and month.
+db.movies.aggregate([
+  {
+    $project: {
+      _id: 0, 
+      title: 1,
+      releaseMonth: { $month: "$release_date" },
+      releaseMonthName: { $dateToString: { format: "%B", date: "$release_date" } }
+    }
+  }
+])
+
+
+3.Calculate the day of the year for each movie's release and display along with the movie's title.
+db.movies.aggregate([
+  {
+    $project: {
+      _id: 0, 
+      title: 1,
+      dayOfYear: { $subtract: [{ $dayOfYear: "$release_date" }, 1] }
+    }
+  }
+])
+
+
+4.Find movies released on the first day of any month.
+db.movies.aggregate([
+  {
+    $match: {
+      $expr: { $eq: [{ $dayOfMonth: "$release_date" }, 1] } 
+    }
+  },
+  {
+    $project: {
+      _id: 0, 
+      title: 1,
+      releaseDate: { $dateToString: { format: "%Y-%m-%d", date: "$release_date" } }
+    }
+  }
+])
+
+
+5.Add 10 days to the release date of each movie and display the new date along with the title.
+db.movies.aggregate([
+  {
+    $project: {
+      _id: 0, 
+      title: 1,
+      newReleaseDate: {
+        $add: [
+          "$release_date", 
+          { $multiply: [10, { $dayTime: 1000 * 60 * 60 * 24 }] } 
+        ]
+      }
+    }
+  },
+  {
+    $project: {
+      title: 1,
+      "New Release Date": { $dateToString: { format: "%Y-%m-%d", date: "$newReleaseDate" } } // Format new date
+    }
+  }
+])
+
+
+6.Calculate the difference in days between the released date and tomatoes.lastUpdated date for each movie.
+db.movies.aggregate([
+  {
+    $project: {
+      _id: 0,
+      title: 1,
+      releaseDateDiff: {
+        $divide: [
+          { $subtract: [ "$tomatoes.lastUpdated", "$release_date" ] }, 
+          { $dayTime: 1000 * 60 * 60 * 24 } 
+        ]
+      }
+    }
+  }
+])
+
+7.Subtract 5 years from the release date of each movie and display the adjusted year along with the title.
+db.movies.aggregate([
+  {
+    $project: {
+      _id: 0,
+      title: 1,
+      adjustedYear: {
+        $year: { $subtract: [ "$release_date", { $multiply: [5, { $year: 1000 * 60 * 60 * 24 * 365 } ] } ] }
+      }
+    }
+  }
+])
+
+8.Group movies into buckets based on IMDb rating.
+db.movies.aggregate([
+  {
+    $bucket: {
+      groupBy: "$imdb.rating", 
+      boundaries: [0, 2, 4, 6, 8, 10], 
+      default: "Other", 
+      output: "moviesByRating" 
+    }
+  },
+  {
+    $project: {
+      _id: 0, 
+      ratingRange: { $arrayElemAt: ["$moviesByRating.rating", 0] }, 
+      movieCount: { $size: "$moviesByRating" }
+    }
+  }
+])
+
+9.Categorize movies by release century.
+db.movies.aggregate([
+  {
+    $project: {
+      _id: 0, 
+      title: 1,
+      releaseCentury: { $substrCP: ["$release_date.isoWeekYear", 0, 2] } 
+    }
+  }
+])
+
+10.Bucket movies based on runtime.
+db.movies.aggregate([
+  {
+    $bucketAuto: {
+      groupBy: "$runtime", 
+      buckets: 5, 
+      granularity: 60, 
+      output: "moviesByRuntime"
+    }
+  },
+  {
+    $project: {
+      _id: 0, // Exclude group ID if not needed
+      runtimeRange: {
+        $first: "$moviesByRuntime.runtime" 
+      },
+      movieCount: { $size: "$moviesByRuntime" } 
+    }
+  }
+])

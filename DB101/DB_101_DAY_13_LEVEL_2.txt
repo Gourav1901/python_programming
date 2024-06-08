@@ -1,0 +1,170 @@
+Problem Statement
+1.Most Popular Project: Formulate a query to find the project with the highest budget by joining the Projects 
+collection with the Departments collection, summarizing the total number of projects per department, and limiting 
+the result to the department with the highest budget project.
+db.projects.aggregate([
+  {
+    $lookup: {
+      from: "departments",
+      localField: "department",
+      foreignField: "_id",
+      as: "department"
+    }
+  },
+  { $unwind: "$department" },
+  {
+    $group: {
+      _id: "$department.name",
+      total: { $sum: 1 },
+      maxBudget: { $max: "$budget" }
+    }
+  }
+])
+
+2.Employees in Engineering Department: Write a MongoDB query to list all employees working in the 'Engineering' 
+department, sorted by their hire date in ascending order.
+
+db.employees.aggregate([
+  {
+    $lookup: {
+      from: "departments",
+      localField: "department_id",
+      foreignField: "_id",
+      as: "department"
+    }
+  },
+  { $unwind: "$department" },
+  { $match: { "department.name": "Engineering" } },
+  { $sort: { hire_date: 1 } }
+])
+
+3.Finance Department Projects: Create a query to list all projects in the 'Finance' department, sorted by budget 
+in descending order.
+
+db.projects.aggregate([
+  {
+    $lookup: {
+      from: "departments",
+      localField: "department",
+      foreignField: "_id",
+      as: "department"
+    }
+  },
+  { $unwind: "$department" },
+  { $match: { "department.name": "Finance" } },
+  { $sort: { budget: 1 } }
+])
+
+4.Recent Sales by Finance Employees: Formulate a query to list all sales made by employees in the 'Finance' 
+department since "2023-09-15", sorted by sale date in ascending order.
+
+db.sales.aggregate([
+  {
+    $lookup: {
+      from: "employees",
+      localField: "employee_id",
+      foreignField: "_id",
+      as: "employee"
+    }
+  },
+  { $unwind: "$employee" },
+  {
+    $lookup: {
+      from: "departments",
+      localField: "employee.department_id",
+      foreignField: "_id",
+      as: "department"
+    }
+  },
+  { $unwind: "$department" },
+  {
+    $match: {
+      sale_date: { $gt: "2023-09-15" }
+    }
+  },
+  {
+    $project: {
+      sale_id: "$_id",
+      employeeName: "$employee.name",
+      department: "$department.name",
+      amount: 1,
+      _id: 0
+    }
+  }
+])
+5.Project Details for Employee 'John Doe': Write a query to find all projects associated with 'John Doe', 
+including project name, budget, and department name.
+
+db.employees.aggregate([
+  {
+    $match: { name: "John Doe" }
+  },
+  {
+    $lookup: {
+      from: "projects",
+      localField: "projects",
+      foreignField: "_id",
+      as: "projects"
+    }
+  },
+  { $unwind: "$projects" },
+  {
+    $lookup: {
+      from: "departments",
+      localField: "projects.department",
+      foreignField: "_id",
+      as: "department"
+    }
+  },
+  { $unwind: "$department" },
+  {
+    $project: {
+      project_name: "$projects.name",
+      budget: "$projects.budget",
+      department_name: "$department.name",
+      _id: 0
+    }
+  }
+])
+6.Employees and Their Office Address for 'Payroll Software' Project: Create a query to list all employees 
+working on the 'Payroll Software' project with their office addresses.
+
+db.projects.aggregate([
+  {
+    $match: { name: "Payroll Software" }
+  },
+  {
+    $lookup: {
+      from: "departments",
+      localField: "department",
+      foreignField: "_id",
+      as: "department"
+    }
+  },
+  { $unwind: "$department" },
+  {
+    $lookup: {
+      from: "employees",
+      localField: "department._id",
+      foreignField: "department_id",
+      as: "employee"
+    }
+  },
+  { $unwind: "$employee" },
+  {
+    $lookup: {
+      from: "offices",
+      localField: "employee.office_id",
+      foreignField: "_id",
+      as: "office"
+    }
+  },
+  { $unwind: "$office" },
+  {
+    $project: {
+      _id: 0,
+      name: "$employee.name",
+      address: "$office.address"
+    }
+  }
+])

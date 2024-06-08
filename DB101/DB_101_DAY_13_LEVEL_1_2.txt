@@ -1,0 +1,107 @@
+Problem Statement
+1.Employee and Department Information: Write a MongoDB query to join the Employees collection with the Departments 
+collection to display each employee's name, age, and corresponding department name.
+db.Employee.aggregate([
+  {
+    $lookup: {
+      from: "Departments",
+      localField: "department_id",
+      foreignField: "_id",
+      as: "empdep"
+    }
+  },
+  {
+    $unwind: "$empdep"
+  },
+  {
+    $project: {
+      _id: 0,
+      name: 1,
+      age: 1,
+      "departmentName": "$empdep.name"
+    }
+  }
+])
+
+
+2.Employee Projects Overview: Create a query to list all employees with their names and a list of project names 
+they are working on, excluding all other details about the projects.
+db.Employee.aggregate([{$lookup:{from:"projects", localField:"projects",foreignField:"_id",as:"proj"}},
+{$unwind:"$proj"},{$project:{_id:0,name:1,projectname:"$project.name"}}])
+
+
+3.Office Location of Employees: Formulate a query to retrieve a list of all employees, including their names, 
+salaries, and the address of their office, without including office IDs in the result.
+db.Employee.aggregate([{$lookup:{from:"offices",localField:"office_id",foreignField:"_id", as : "EmpOff"}},
+{$project:{_id:0,name:1,salary:1, address:"$EmpOff.address"}}])
+
+4.Top Department by Employee Count: Write a query to determine which department has the most employees, displaying 
+only the department's name and the number of employees.
+db.Employees.aggregate([
+  {
+    $lookup: {
+      from: "Departments",
+      localField: "department_id",
+      foreignField: "_id", 
+      as: "departmentInfo" 
+    }
+  },
+  {
+    $unwind: "$departmentInfo" 
+  },
+  {
+    $group: { 
+      _id: "$departmentInfo.name", 
+      count: { $sum: 1 } 
+    }
+  },
+  {
+    $sort: { count: -1 } 
+  },
+  {
+    $limit: 1 
+  },
+  {
+    $project: { 
+      _id: 0, 
+      department: "$_id",
+      employeeCount: "$count"
+    }
+  }
+])
+
+
+5.Highest Sales by Employee: Create a query to find the employee who has made the highest total sales amount, 
+displaying the employee's name and the total sales amount.
+db.Sales.aggregate([
+  {
+    $lookup: { 
+      from: "Employees",
+      localField: "salesperson_id", 
+      foreignField: "_id", 
+      as: "employeeInfo" 
+    }
+  },
+  {
+    $unwind: "$employeeInfo" 
+  },
+  {
+    $group: { 
+      _id: "$employeeInfo.name",
+      totalSales: { $sum: "$sale_amount" } 
+    }
+  },
+  {
+    $sort: { totalSales: -1 } 
+  },
+  {
+    $limit: 1 
+  },
+  {
+    $project: { 
+      _id: 0, 
+      employee: "$_id", 
+      totalSales: "$totalSales"
+    }
+  }
+])
