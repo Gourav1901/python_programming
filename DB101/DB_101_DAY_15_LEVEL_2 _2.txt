@@ -1,0 +1,174 @@
+1.A publishing company wants to publish a book on forts built before the 15th century but are still occupied. They need a list of such forts along with their founding dates and ownership details.
+db.forts.find({
+  builtBefore: { $lt: new Date(1500, 0, 1) }, // Before 15th century
+  occupied: true
+}, {
+  builtBefore: 1, // Include builtBefore date
+  occupied: 1, // Include occupied status
+  foundingDate: 1, // Include founding date
+  ownership: 1 // Include ownership details
+});
+
+2.A travel blogger is compiling a list of forts with images available. They need to know which forts have more than 5 images and need a list of these forts along with the image URLs.
+db.forts.aggregate([
+  { $lookup: {
+      from: "images",
+      localField: "_id",
+      foreignField: "fortId",
+      as: "images"
+    }
+  },
+  { $unwind: "$images" },
+  { $group: {
+      _id: "$_id",
+      fortDetails: { $first: "$$ROOT" }, // Preserve fort details
+      imageCount: { $sum: 1 }
+    }
+  },
+  { $match: { imageCount: { $gt: 5 } } }, // Filter for more than 5 images
+  { $project: {
+      _id: 0, // Remove unnecessary _id field
+      fortDetails: 1,
+      imageCount: 1
+    }
+  }
+]);
+
+3.An environmental organization wants to study forts with a height greater than 20 feet and an area larger than 10 acres. They need a summary of such forts, including their height, area, and location details.
+db.forts.find({
+  height: { $gt: 20 },
+  area: { $gt: 10 }
+}, {
+  height: 1,
+  area: 1,
+  location: 1 // Include location details
+});
+
+4.A cultural heritage organization wants to identify forts associated with significant historical figures. They need the details of forts built by any specific dynasty and the battles they were involved in.
+db.forts.aggregate([
+  { $lookup: {
+      from: "history",
+      localField: "_id",
+      foreignField: "fortId",
+      as: "history"
+    }
+  },
+  { $unwind: "$history" },
+  { $match: { "history.dynasty": "YourDynasty" } } // Replace "YourDynasty" with the specific dynasty
+], {
+  name: 1, // Include fort name
+  builtBy: 1, // Include builder details
+  "history.battles": 1 // Include battles from history
+});
+
+5.An educational portal wants to list all forts that are part of the "Reddi Kingdom" and were later controlled by other entities. They need details of the transitions of control.
+db.forts.aggregate([
+  { $match: { "history.controlledBy": "Reddi Kingdom" } }, // Part of Reddi Kingdom
+  { $lookup: {
+      from: "history",
+      localField: "_id",
+      foreignField: "fortId",
+      as: "history"
+    }
+  },
+  { $unwind: "$history" },
+  { $sort: { "history.controlledBy": 1 } }, // Sort by controlledBy chronologically
+  { $group: {
+      _id: "$_id",
+      name: 1, // Include fort name
+      transitions: { $push: "$history.controlledBy" } // Track control transitions
+    }
+  },
+  { $project: { _id: 0, name: 1, transitions: 1 } } // Remove unnecessary _id field
+]);
+
+6.A conservation group is planning to request funding for fort restoration. They need to identify forts that are currently in ruins and have a significant historical background. They need the name, founding date, and battles/wars associated with such forts.
+db.forts.aggregate([
+  { $lookup: {
+      from: "history",
+      localField: "_id",
+      foreignField: "fortId",
+      as: "history"
+    }
+  },
+  { $unwind: "$history" },
+  { $match: { condition: "ruins" } } // Replace "condition" with a field indicating ruin status
+], {
+  name: 1, // Include fort name
+  foundingDate: 1, // Include founding date
+  "history.battles": 1, // Include battles/wars from history
+});
+
+7.A geographic information system (GIS) company wants to create a map showing the coordinates of all forts built in the 14th century or earlier. They need the names and coordinates of these forts.
+db.forts.find({
+  builtBefore: { $lt: new Date(1400, 0, 1) } // Before 14th century
+}, {
+  name: 1, // Include fort name
+  coordinates: 1 // Include coordinates
+});
+
+8.A historian needs to find the details of forts which were controlled by the Government of Andhra Pradesh and have been reconstructed or are in ruins. Additionally, they need the total count of such forts and their average height.
+db.forts.aggregate([
+  { $match: { "controlledBy": "Government of Andhra Pradesh" } }, // Controlled by Andhra Pradesh
+  { $lookup: {
+      from: "history",
+      localField: "_id",
+      foreignField: "fortId",
+      as: "history"
+    }
+  },
+  { $unwind: "$history" },
+  { $match: { $or: [{ "history.condition": "reconstructed" }, { "history.condition": "ruins" }] } }, // Reconstructed or ruins
+], {
+  name: 1, // Include fort name
+  "history.condition": 1, // Include condition (reconstructed/ruins)
+  count: { $sum: 1 } // Count total forts (using $sum: 1 in aggregation pipeline)
+}, {
+  $group: { // Group for total count and average height
+    _id: null,
+    totalForts: { $sum: "$count" },
+    avgHeight: { $avg: "$height" } // Assuming a "height" field exists
+  }
+});
+
+9.A tourism company wants to create a tour package that includes all forts built by the Reddy Kingdom and fought in at least three major battles/wars. They need a list of these forts with their details and the battles/wars they were involved in.
+db.forts.aggregate([
+  { $match: { "history.controlledBy": "Reddi Kingdom" } }, // Part of Reddi Kingdom
+  { $lookup: {
+      from: "history",
+      localField: "_id",
+      foreignField: "fortId",
+      as: "history"
+    }
+  },
+  { $unwind: "$history" },
+  { $match: { "history.battles.major": true } }, // Filter for major battles
+  { $group: {
+      _id: "$_id",
+      fortDetails: { $first: "$$ROOT" }, // Preserve fort details
+      battleCount: { $sum: { $cond: [{ $eq: ["$history.battles.major", true] }, 1, 0] } } // Count major battles
+    }
+  },
+  { $match: { battleCount: { $gt: 2 } } }, // Fought in at least 3 major battles
+  { $project: {
+      _id: 0, // Remove unnecessary _id field
+      fortDetails: 1,
+      battleCount: 1
+    }
+  }
+]);
+
+10.An academic researcher is studying the geographical spread of forts. They need to identify all forts located in districts starting with the letter 'V'. They also need the total area these forts cover combined.
+db.forts.aggregate([
+  { $match: { district: { $regex: "^V" } } }, // District starts with "V"
+  { $project: {
+      name: 1, // Include fort name
+      area: 1 // Include area
+    }
+  },
+  { $group: {
+      _id: null,
+      totalArea: { $sum: "$area" }
+    }
+  }
+]);

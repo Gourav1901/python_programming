@@ -1,0 +1,68 @@
+Calculate the average rating for each course pring the course name and the average rating 
+db.ratings.aggregate([
+  {
+    $group:{
+      _id:{"$courseID"},
+      avgRating:{$avg:"rating"}
+          }
+  },
+  {
+    $lookup:{
+      from:"courses",
+      localField:"_id".
+      foreignField:"_id",
+      as:"course"
+    }
+  },
+  {
+    $project:{
+      _id:0,
+      "CourseName":"$course.name",
+      averageRating:{$round:["$avgRating":2]}
+
+
+    }
+  }
+])
+
+
+2Print the name of each instructor and the number of students
+they have taught
+db.course_data.aggregate(
+[
+  {
+    $lookup:{
+      from:"courses",
+      localField:"courseID".
+      foreignField:"id",
+      as:"course"
+    }
+  },
+  {$unwind:"$course"},
+  {
+    $group:{
+      _id:"$course.instructors",
+      nStudentsTaught:{$sum:1}
+    }
+  },
+  {
+    $lookup:{
+       from:"instructors",
+      localField:"_id",
+      foreignField:"id",
+      as:"instructor"
+    }
+
+  },
+
+  {
+    $project:{
+      _id:0,
+      "instructorName":"$instructor.name",
+      "numberOfStudentsTaught":"$numStudentsTaught"
+    }
+  }
+]
+)
+
+

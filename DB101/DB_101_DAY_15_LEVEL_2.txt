@@ -1,0 +1,347 @@
+his assignmnet is to test your undertsning in the topic of Transaction in Database (MongDB). This is the practical part where you need to execute query for Indexing.
+
+Problem Statement
+Objective:
+The objective of this assignment is to understand the impact of indexes on query performance in MongoDB. You will create a MongoDB database, insert data into a collection, and then run queries with and without indexes to compare performance.
+
+Tasks:
+Create a new database named company
+use company
+
+Inside the library database, create a collection named employee
+db.createCollection("employee")
+
+Insert at least 1000 documents into the employee collection. (Use Mockaroo for generate sample data)
+Each document should represent an employee and must contain the following fields:
+name(string) -> Full name of the employee.
+email(string) -> Email of the employee.
+year_of_joining (integer) -> Year in which the employee join the company. Year should be between ( 2010 - 2024 )
+gender(string)
+age (integer)
+salary
+yes Done I have created dummy data
+
+Query without Index:
+find all employees who joined after the year 2017.
+db.employee.find({year_of_joining:{$gt:2017}})
+
+What is the time taken of this query ?
+db.employee.find({year_of_joining:{$gt:2017}}).explain()
+executionStats: {
+    executionSuccess: true,
+    nReturned: 880,
+    executionTimeMillis: 2,
+    totalKeysExamined: 0,
+    totalDocsExamined: 1000,
+    executionStages: {
+      stage: 'COLLSCAN',
+      filter: {
+        year_of_joining: {
+          '$gt': 2017
+        }
+
+How you will measure the performance of this query ? Give detail descriptionabout the "executionStats".
+db.employee.find({year_of_joining:{$gt:2017}}).explain("executionStats")
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'company.employee',
+    indexFilterSet: false,
+    parsedQuery: {
+      year_of_joining: {
+        '$gt': 2017
+      }
+    },
+    queryHash: '840ACC5A',
+    planCacheKey: '840ACC5A',
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    winningPlan: {
+      stage: 'COLLSCAN',
+      filter: {
+        year_of_joining: {
+          '$gt': 2017
+        }
+      },
+      direction: 'forward'
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 880,
+    executionTimeMillis: 2,
+    totalKeysExamined: 0,
+    totalDocsExamined: 1000,
+    executionStages: {
+      stage: 'COLLSCAN',
+      filter: {
+        year_of_joining: {
+          '$gt': 2017
+        }
+      },
+      nReturned: 880,
+      executionTimeMillisEstimate: 0,
+      works: 1001,
+      advanced: 880,
+      needTime: 120,
+      needYield: 0,
+      saveState: 1,
+      restoreState: 1,
+      isEOF: 1,
+      direction: 'forward',
+      docsExamined: 1000
+    }
+  },
+  command: {
+    find: 'employee',
+    filter: {
+      year_of_joining: {
+        '$gt': 2017
+      }
+    },
+    '$db': 'company'
+  },
+  serverInfo: {
+    host: 'LAPTOP-KNNMRIOI',
+    port: 27017,
+    version: '7.0.11',
+    gitVersion: 'f451220f0df2b9dfe073f1521837f8ec5c208a8c'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted'
+  },
+  ok: 1
+}
+The explain() method provides information about how MongoDB executes a query. Look for these key fields in the
+ output:
+
+* executionTimeMillis: The total time (in milliseconds) spent executing the query.
+* totalKeysExamined: The total number of keys examined by the query optimizer.
+* totalDocsExamined: The total number of documents examined by the query.
+* indexBoundsCovered: Indicates if the query used an index and the covered fields.
+
+Create an Index:
+Create an ascending index on the year_of_joining field of the employee collection.
+db.employee.createIndex({year_of_joining : 1})
+
+What is the time taken of this query ?
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'company.employee',
+    indexFilterSet: false,
+    parsedQuery: {
+      year_of_joining: {
+        '$gt': 2017
+      }
+    },
+    queryHash: '840ACC5A',
+    planCacheKey: '2F0EB2C8',
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    winningPlan: {
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: {
+          year_of_joining: 1
+        },
+        indexName: 'year_of_joining_1',
+        isMultiKey: false,
+        multiKeyPaths: {
+          year_of_joining: []
+        },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: {
+          year_of_joining: [
+            '(2017, inf.0]'
+          ]
+        }
+      }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 880,
+    executionTimeMillis: 23,
+    totalKeysExamined: 880,
+    totalDocsExamined: 880,
+    executionStages: {
+      stage: 'FETCH',
+      nReturned: 880,
+      executionTimeMillisEstimate: 20,
+      works: 881,
+      advanced: 880,
+      needTime: 0,
+      needYield: 0,
+      saveState: 1,
+      restoreState: 1,
+      isEOF: 1,
+      docsExamined: 880,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 880,
+        executionTimeMillisEstimate: 19,
+        works: 881,
+        advanced: 880,
+        needTime: 0,
+        needYield: 0,
+        saveState: 1,
+        restoreState: 1,
+        isEOF: 1,
+        keyPattern: {
+          year_of_joining: 1
+        },
+        indexName: 'year_of_joining_1',
+        isMultiKey: false,
+        multiKeyPaths: {
+          year_of_joining: []
+        },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: {
+          year_of_joining: [
+            '(2017, inf.0]'
+          ]
+        },
+        keysExamined: 880,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  command: {
+    find: 'employee',
+    filter: {
+      year_of_joining: {
+        '$gt': 2017
+      }
+    },
+    '$db': 'company'
+  },
+  serverInfo: {
+    host: 'LAPTOP-KNNMRIOI',
+    port: 27017,
+    version: '7.0.11',
+    gitVersion: 'f451220f0df2b9dfe073f1521837f8ec5c208a8c'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted'
+  },
+  ok: 1
+}
+
+How you will measure the performance of this query ? Give detail descriptionabout the "executionStats".
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'company.employee',
+    indexFilterSet: false,
+    parsedQuery: {
+      year_of_joining: {
+        '$gt': 2017
+      }
+    },
+    queryHash: '840ACC5A',
+    planCacheKey: '2F0EB2C8',
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    winningPlan: {
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: {
+          year_of_joining: 1
+        },
+        indexName: 'year_of_joining_1',
+        isMultiKey: false,
+        multiKeyPaths: {
+          year_of_joining: []
+        },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: {
+          year_of_joining: [
+            '(2017, inf.0]'
+          ]
+        }
+      }
+    },
+    rejectedPlans: []
+  },
+  command: {
+    find: 'employee',
+    filter: {
+      year_of_joining: {
+        '$gt': 2017
+      }
+    },
+    '$db': 'company'
+  },
+  serverInfo: {
+    host: 'LAPTOP-KNNMRIOI',
+    port: 27017,
+    version: '7.0.11',
+    gitVersion: 'f451220f0df2b9dfe073f1521837f8ec5c208a8c'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted'
+  },
+  ok: 1
+}
+
+Analysis:
+The difference in query execution time.
+The difference in query execution time will likely be significant, with the indexed query being much faster.
+
+How and why the index affected the query performance.
+Indexes improve query performance by allowing MongoDB to quickly locate relevant documents based on the
+ indexed field(s).
+
+The results of the explain() method for both queries.
+The explain() output shows how the query optimizer leveraged the index to efficiently filter documents.
+
+Deleting the index :
+Drop the previous index for the column - year_of_joining
+db.employee.dropIndex("year_of_joining_1")

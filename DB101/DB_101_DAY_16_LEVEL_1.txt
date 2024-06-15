@@ -1,0 +1,48 @@
+1.Find all videos uploaded after March 1, 2024.
+db.videos.find({ uploadDate: { $gt: ISODate("2024-03-01") } })
+
+
+2.Retrieve all users who joined before 2024.
+db.users.find({ joinedDate: { $lt: ISODate("2024-01-01") } })
+
+3.Get all comments made on April 1, 2024.
+db.comments.find({ timestamp: { $gte: ISODate("2024-04-01") , $lt: ISODate("2024-04-02") } })
+
+4.List all videos with more likes than dislikes.
+db.videos.find({ likes: { $gt: $dislikes } })
+
+5.Fetch all channels with more than 1000 subscribers.
+db.channels.find({ subscribers: { $gt: 1000 } })
+
+6.Find videos tagged with "Tutorial".
+db.videos.find({ tags: "Tutorial" })
+
+7.Retrieve user details of those who have subscribed to "ch1".
+// Find channel ID for "ch1"
+db.channels.createIndex({ _id: "ch1" }) as ch1d;
+
+// Find users subscribed to ch1 and project only the "name" field
+db.users.find({ subscribedChannelIds: ch1Id }, { name: 1 })
+
+8.Get all comments with more than 5 likes.
+db.comments.find({ likes: { $gt: 5 } })
+
+9.Find all videos from the "Tech Tutorials" channel.
+// Find channel ID for "Tech Tutorials"
+
+10.List users who have subscribed to more than one channel.
+db.users.find({ subscribedChannelIds: { $size: { $gt: 1 } } })
+
+11.Calculate the average likes for videos in each channel.
+// Perform aggregation to calculate average likes per channel
+db.videos.aggregate([
+  { $group: { _id: "$channelId", avgLikes: { $avg: "$likes" } } }
+])
+
+12.Aggregate comments to show which video has the most engaged audience (most comments).
+// Perform aggregation to find video with the most comments
+db.comments.aggregate([
+  { $group: { _id: "$videoId", commentCount: { $sum: 1 } } },
+  { $sort: { commentCount: -1 } },
+  { $limit: 1 }
+])

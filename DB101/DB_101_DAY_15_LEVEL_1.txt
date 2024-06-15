@@ -1,0 +1,32 @@
+Problem Statement
+#indianfort
+1.Find all entries where the name begins with "G" (Case Sensitive).
+db.indianfort.find({name : {$regex: /^G/}})
+
+2.Find all entries where the locations array contains any string starting with "Ch" (Case Insensitive).
+db.indianfort.find({ locations: { $regex: /^ch/i } })
+
+3.Find all entries where the details have a property "Type" containing "Fort" anywhere in the value 
+(Case Insensitive).
+db.indianfort.find({"details.Type:{$regex:/Fort/}})
+
+4.Find entries where the name ends with "Fort" (Case Sensitive).
+db.indianfort.find({name:{$regex:/Fort$/}})
+
+5.Find all entries where the name contains either "Konda" or "Giri" anywhere in the text (Case Sensitive).
+db.indianfort.find({name: {$regex:/Konda|Giri/}})
+
+6.Find entries where the locations array contains strings that have "India" anywhere, ignoring case.
+db.indianfort.find({locations :{$regex:/India/i}})
+
+7.Find all entries where the last_edited field starts with "This page was last edited on" (Case Sensitive).
+db.indianfort.find({last_edited:{$regex:/This page was last edited on/}})
+
+8.Find entries where the details object has "Built" property that includes "century", ignoring case.
+db.indianfort.find({"details.Built" : {$regex: /century/i}})
+
+9.Find all entries where the name starts with either "B" or "C" (Case Sensitive).
+db.indianfort.find({name:{$regex:/^B|^C/}})
+
+10.Find entries where the images array contains URLs ending with ".png" (Case Sensitive).
+db.indianfort.find({images: {$regex:/.png$/}})

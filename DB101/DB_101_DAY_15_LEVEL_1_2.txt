@@ -1,0 +1,117 @@
+1.Explain the process of creating a schema validation rule in MongoDB for a collection that requires 
+the "email" field to be unique and in a proper email format.
+MongoDB provides the capability for schema validation during updates and insertions, allowing databases to enforce 
+data integrity rules and structures.
+This is accomplished using the $jsonSchema operator in the collection creation or modification command.
+Purpose of schema validation :
+Specify Data Types: Ensure that fields contain data of the intended type (e.g., string, integer, date).
+Mandatory Fields: Define which fields are required in each document.
+Value Constraints: Apply constraints on values, such as minimum or maximum values for numbers, or specific format
+ requirements for strings using regular expressions.
+db.createCollection("users", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["email"],
+      properties: {
+        email: {
+          bsonType: "string",
+          unique: true,
+          pattern: "^[\\w!#$%&'*+/=?^{|}~-]+(?:\\.[\\w!#$%&'*+/=?^{|}~-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$"
+        }
+      }
+    }
+  }
+})
+
+2.How can you modify an existing collection to include schema validation in MongoDB? Provide an example where the 
+"name" field is required and must be a string.
+we can modify an existing collection to include schema validation in MongoDB using the collMod command. Here's an 
+example where the "name" field is required and must be a string:
+// Assuming your collection is named "people"
+db.people.collMod({
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name"],
+      properties: {
+        name: {
+          bsonType: "string"
+        }
+      }
+    }
+  }
+})
+
+
+3.How can you enforce schema validation in MongoDB to ensure an array field 
+"tags" only contains strings?
+db.collection.createIndex(
+  { tags: 1 },
+  { validator: { 
+    $arraySize: { 
+        bsonType: "string" } 
+        } 
+        }
+)
+
+4.Explain how to validate a nested object in MongoDB. For example, ensure the "address" field is an 
+object containing required "street" and "city" fields, both of which must be strings.
+db.createCollection("customers", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      properties: {
+        address: {
+          bsonType: "object",
+          required: ["street", "city"],
+          properties: {
+            street: {
+              bsonType: "string"
+            },
+            city: {
+              bsonType: "string"
+            }
+          }
+        }
+      }
+    }
+  }
+})
+
+
+5.How do you create a capped collection in MongoDB with a maximum size of 100MB and 
+a maximum of 50000 documents?
+db.createCollection("capped_collection", {
+  capped: true,
+  size: 100 * 1024 * 1024, // 100MB in bytes
+  max: 50000
+})
+
+6.Can you convert an existing collection into a capped collection in MongoDB? Explain why or why not.
+No, MongoDB doesn't directly convert an existing collection into a capped collection. There are two main reasons:
+Structure Difference: Capped collections have a predefined size limit, while standard collections are dynamically 
+sized. Converting directly would require resizing the existing data and potentially truncating documents to fit 
+within the capped collection's size constraints.
+Data Integrity:  Capped collections overwrite the oldest documents upon reaching their limit. Simply converting an 
+existing collection wouldn't determine which documents to overwrite, potentially leading to data loss.
+Here are two alternative approaches to achieve a similar outcome:
+Create a New Capped Collection and Migrate Data:
+Define a new capped collection with the desired size and document limit.
+Use aggregation pipelines or scripting to selectively copy documents from the existing collection to the new capped 
+collection, ensuring data integrity.
+Optionally, you can drop the original collection after successful migration.
+Implement TTL (Time-to-Live) Index:
+If your goal is to manage data expiration and limit collection size, consider creating a TTL index on a suitable 
+date field in the existing collection.
+Documents exceeding the specified time-to-live will automatically expire and be deleted, mimicking the behavior 
+of a capped collection to some extent.
+
+7.Describe a scenario where using a capped collection would be more beneficial than a regular collection.
+Capped collections in MongoDB offer a fixed size for data with automatic overwrite, ideal for frequently updated 
+logs or sensor readings. They prioritize writes and recent data access but limit historical analysis and complex 
+queries.
+Regular collections grow dynamically and store all data, but managing size and querying older data can become 
+cumbersome.
+While directly converting isn't possible, you can create a new capped collection and migrate data, or use a TTL 
+index in a regular collection to achieve similar size control and data expiration.

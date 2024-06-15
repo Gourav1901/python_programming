@@ -1,0 +1,474 @@
+1.Find all users and the titles of videos they've commented on.
+db.comments.aggregate([
+  {
+    $lookup: {
+      from: "users",
+      localField: "userId",
+      foreignField: "_id",
+      as: "user"
+    }
+  },
+  {
+    $unwind: "$user"
+  },
+  {
+    $lookup: {
+      from: "videos",
+      localField: "videoId",
+      foreignField: "_id",
+      as: "video"
+    }
+  },
+  {
+    $unwind: "$video"
+  },
+  {
+    $project: {
+      "User Name": "$user.name",
+      "Video Title": "$video.title"
+    }
+  }
+])
+
+
+2.Calculate the average likes of comments for each video, including the video title.
+db.comments.aggregate([
+  {
+    $lookup: {
+      from: "videos",
+      localField: "videoId",
+      foreignField: "_id",
+      as: "video"
+    }
+  },
+  {
+    $unwind: "$video"
+  },
+  {
+    $group: {
+      _id: "$videoId",
+      videoTitle: { $first: "$video.title" },
+      avgLikes: { $avg: "$likes" }
+    }
+  }
+])
+
+
+3.List each channel and its total number of comments across all videos.
+db.channels.aggregate([
+  {
+    $lookup: {
+      from: "videos",
+      localField: "_id",
+      foreignField: "channelId",
+      as: "videos"
+    }
+  },
+  {
+    $unwind: "$videos"
+  },
+  {
+    $lookup: {
+      from: "comments",
+      localField: "videos._id",
+      foreignField: "videoId",
+      as: "comments"
+    }
+  },
+  {
+    $unwind: "$comments"
+  },
+  {
+    $group: {
+      _id: "$_id",
+      channelName: { $first: "$name" },
+      totalComments: { $sum: 1 }
+    }
+  }
+])
+
+4.For each video, find the top commenter based on the number of likes received on their comment.
+db.comments.aggregate([
+  {
+    $lookup: {
+      from: "users",
+      localField: "userId",
+      foreignField: "_id",
+      as: "user"
+    }
+  },
+  {
+    $unwind: "$user"
+  },
+  {
+    $group: {
+      _id: "$videoId",
+      topCommenter: { $max: "$user.name" },
+      topCommentLikes: { $max: "$likes" }
+    }
+  }
+])
+
+5.Aggregate total views per channel, including the channel name.
+db.channels.aggregate([
+  {
+    $lookup: {
+      from: "videos",
+      localField: "_id",
+      foreignField: "channelId",
+      as: "videos"
+    }
+  },
+  {
+    $unwind: "$videos"
+  },
+  {
+    $lookup: {
+      from: "analytics",
+      localField: "videos._id",
+      foreignField: "videoId",
+      as: "analytics"
+    }
+  },
+  {
+    $unwind: "$analytics"
+  },
+  {
+    $group: {
+      _id: "$_id",
+      channelName: { $first: "$name" },
+      totalViews: { $sum: "$analytics.views" }
+    }
+  }
+])
+
+6.Find all videos with their corresponding watch duration and total likes on comments.
+db.videos.aggregate([
+  {
+    $lookup: {
+      from: "analytics",
+      localField: "_id", // Video ID from the "videos" collection
+      foreignField: "videoId", // Matches the video ID in the "analytics" collection
+      as: "analytics" // Assign results to the "analytics" field
+    }
+  },
+  {
+    $unwind: "$analytics" // Deconstruct the "analytics" array to access individual documents
+  },
+  {
+    $lookup: {
+      from: "comments",
+      localField: "_id", // Video ID from the "videos" collection
+      foreignField: "videoId", // Matches the video ID in the "comments" collection
+      as: "comments" // Assign results to the "comments" field
+    }
+  },
+  {
+    $unwind: "$comments" // Deconstruct the "comments" array to access individual documents
+  },
+  {
+    $group: {
+      _id: "$_id", // Maintain video ID for identification
+      title: { $first: "$title" }, // Get the title of the first video (assuming unique titles)
+      totalViews: { $first: "$analytics.views" }, // Get the views from the first "analytics" document
+      avgLikes: { $avg: "$comments.likes" }, // Calculate the average likes per comment
+      totalComments: { $sum: 1 }, // Count the total number of comments
+      // Optional metrics (consider adding based on your needs)
+      // mostLikedComment: { $max: "$comments.likes" }, // Find the comment with the most likes (optional)
+      // leastLikedComment: { $min: "$comments.likes" }, // Find the comment with the least likes (optional)
+    }
+  },
+  {
+    $project: {
+      _id: 0, // Remove unnecessary _id field
+      title: 1,
+      totalViews: 1,
+      avgLikes: 1,
+      totalComments: 1,
+      // Add projections for optional metrics if included
+      // mostLikedComment: 1,
+      // leastLikedComment: 1
+    }
+  }
+])
+
+
+7.The channel "Tech Tutorials" wants to analyze the engagement metrics for their most popular videos. They need a report that includes the video titles, total views, total likes, total dislikes, and the top three comments with the highest likes for each video. This will help them understand which content resonates best with their audience.
+db.videos.aggregate([
+  { $match: { channelId: "ch1" } }, // Filter for "Tech Tutorials" videos
+  {
+    $lookup: {
+      from: "analytics",
+      localField: "_id",
+      foreignField: "videoId",
+      as: "analytics"
+    }
+  },
+  {
+    $unwind: "$analytics"
+  },
+  {
+    $lookup: {
+      from: "comments",
+      localField: "_id",
+      foreignField: "videoId",
+      as: "comments"
+    }
+  },
+  {
+    $unwind: "$comments"
+  },
+  {
+    $group: {
+      _id: "$_id",
+      title: { $first: "$title" },
+      totalViews: { $first: "$analytics.views" },
+      totalLikes: { $sum: "$comments.likes" },
+      totalDislikes: { $sum: { $cond: [{ $eq: ["$comments.likes", 0] }, 1, 0] } }, // Count dislikes from comments with 0 likes
+      topComments: {
+        $push: {
+          commenter: "$comments.userId", // Assuming user information can be retrieved from another collection
+          likes: "$comments.likes",
+          sort: { likes: -1 }, // Sort in descending order of likes
+          limit: 3 // Limit to top 3 comments
+        }
+      }
+    }
+  },
+  { $project: { _id: 0, ...rest } } // Remove unnecessary _id field
+])
+
+8.To enhance user engagement, the team wants to identify users who have subscribed to the "Tech Tutorials" channel. They need a list of these users, along with the channels they have subscribed to and their subscription dates.
+db.users.aggregate([
+  { $match: { subscribedChannelIds: "ch1" } }, // Filter users subscribed to "ch1"
+  {
+    $lookup: {
+      from: "channels",
+      localField: "subscribedChannelIds",
+      foreignField: "_id",
+      as: "channels"
+    }
+  },
+  {
+    $unwind: "$channels"
+  },
+  {
+    $project: {
+      "User Name": "$name",
+      "Subscribed Channels": "$subscribedChannelIds",
+      "Subscription Dates": "$joinedDate", // Assuming joinedDate indicates subscription time
+      "Channel Names": "$channels.name" // Channel name from lookup
+    }
+  }
+])
+
+9.The marketing team wants to understand the performance of the "Introduction to MongoDB" video in different countries. They need a detailed breakdown of the views by country for this video. This information will be used to target marketing campaigns.
+db.videos.aggregate([
+  { $match: { title: "Introduction to MongoDB" } }, // Filter for specific video
+  {
+    $lookup: {
+      from: "analytics",
+      localField: "_id",
+      foreignField: "videoId",
+      as: "analytics"
+    }
+  },
+  {
+    $unwind: "$analytics"
+  },
+  {
+    $group: {
+      _id: null, // Single document for overall view breakdown
+      viewByCountry: { $push: { country: "$analytics.viewsByCountry", total: { $sum: "$analytics.viewsByCountry.value" } } } // Flatten and sum views
+    }
+  },
+  { $project: { viewByCountry: 1, _id: 0 } } // Remove unnecessary _id field
+])
+
+10.To enhance user engagement strategies, the platform's team wants a summary of user interactions for a specific user, including the total number of comments made, the total number of videos liked, and the list of channels subscribed to.
+db.users.aggregate([
+  { $match: { _id: "u1" } }, // Replace "_id: "u1"" with the actual user ID
+  {
+    $lookup: {
+      from: "comments",
+      localField: "_id",
+      foreignField: "userId",
+      as: "comments"
+    }
+  },
+  {
+    $unwind: "$comments"
+  },
+  {
+    $lookup: {
+      from: "videos",
+      localField: "$comments.videoId",
+      foreignField: "_id",
+      as: "videos"
+    }
+  },
+  {
+    $unwind: "$videos"
+  },
+  {
+    $group: {
+      _id: null, // Single document for summary
+      totalComments: { $sum: 1 },
+      totalLikedVideos: { $sum: { $cond: [{ $eq: ["$comments.likes", { $gt: 0 }] }, 1, 0] } }, // Count liked videos
+      subscribedChannels: { $addToSet: "$videos.channelId" } // Get unique subscribed channels
+    }
+  },
+  { $project: { _id: 0, ...rest } } // Remove unnecessary _id field
+])
+
+11.The analytics team wants to generate a detailed report for the "Introduction to MongoDB" video. The report should include the total views, likes, dislikes, top 5 comments by likes, and a breakdown of views by country. This will help them understand the performance and audience engagement for the video.
+db.videos.aggregate([
+  { $match: { title: "Introduction to MongoDB" } },
+  {
+    $lookup: {
+      from: "analytics",
+      localField: "_id",
+      foreignField: "videoId",
+      as: "analytics"
+    }
+  },
+  {
+    $unwind: "$analytics"
+  },
+  {
+    $lookup: {
+      from: "comments",
+      localField: "_id",
+      foreignField: "videoId",
+      as: "comments"
+    }
+  },
+  {
+    $unwind: "$comments"
+  },
+  {
+    $group: {
+      _id: null, // Single document for report
+      title: { $first: "$title" },
+      totalViews: { $first: "$analytics.views" },
+      totalLikes: { $sum: "$comments.likes" },
+      totalDislikes: { $sum: { $cond: [{ $eq: ["$comments.likes", 0] }, 1, 0] } },
+      topComments: {
+        $push: {
+          commenter: "$comments.userId", // Assuming retrieval from another collection
+          text: "$comments.text", // Include comment text
+          likes: "$comments.likes",
+          sort: { likes: -1 },
+          limit: 5
+        }
+      },
+      viewByCountry: { $first: "$analytics.viewsByCountry" } // Access view breakdown
+    }
+  },
+  { $project: { _id: 0, ...rest } } // Remove unnecessary _id field
+])
+
+12.The content team needs to generate a monthly performance report for the "Tech Tutorials" channel. This report should include the total number of new videos uploaded, total views, total likes, and the number of new subscribers for each month.
+db.channels.aggregate([
+  { $match: { _id: "ch1" } }, // Filter for "Tech Tutorials" channel
+  {
+    $lookup: {
+      from: "videos",
+      localField: "_id",
+      foreignField: "channelId",
+      as: "videos"
+    }
+  },
+  {
+    $unwind: "$videos"
+  },
+  {
+    $lookup: {
+      from: "analytics",
+      localField: "videos._id",
+      foreignField: "videoId",
+      as: "analytics"
+    }
+  },
+  {
+    $unwind: "$analytics"
+  },
+  {
+    $group: {
+      _id: { month: { $month: "$videos.uploadDate" }, year: { $year: "$videos.uploadDate" } }, // Group by month and year
+      channelName: { $first: "$name" },
+      totalVideos: { $sum: 1 },
+      totalViews: { $sum: "$analytics.views" },
+      totalLikes: {
+        $sum: {
+          $sum: "$comments.likes" // Nested aggregation for total comment likes
+        }
+      },
+      totalDislikes: {
+        $sum: {
+          $cond: [{ $eq: ["$comments.likes", 0] }, 1, 0]
+        } // Count dislikes from comments with 0 likes
+      },
+      // Add subscriber information (optional)
+      // $lookup: {
+      //   from: "users", // Assuming a "users" collection for subscriptions
+      //   localField: "subscribedChannelIds", // Assuming "subscribedChannelIds" field in user document
+      //   foreignField: "_id",
+      //   as: "subscribers"
+      // },
+      // $unwind: "$subscribers" (if using subscriber lookup)
+      // newSubscribers: { $addToSet: { userId: "$subscribers.userId" } }, // Count new subscribers per month (if needed)
+    }
+  },
+  {
+    $project: {
+      _id: 0, // Remove unnecessary _id field
+      month: "$_id.month",
+      year: "$_id.year",
+      channelName: 1,
+      totalVideos: 1,
+      totalViews: 1,
+      totalLikes: 1,
+      totalDislikes: 1,
+      // Add subscriber information projection (if used)
+      // newSubscribers: { $size: "$newSubscribers" }, // Count new subscribers using $size
+      // "New Subscribers (Usernames)": "$subscriberDetails.name" // Include subscriber names
+    }
+  }
+])
+
+13.The platform team wants to analyze user interactions for each video, focusing on the "Introduction to MongoDB" video. They need a report that includes the total number of comments, the total number of replies, and the average number of likes for comments made on this video.
+db.videos.aggregate([
+  { $match: { title: "Introduction to MongoDB" } },
+  {
+    $lookup: {
+      from: "comments",
+      localField: "_id",
+      foreignField: "videoId",
+      as: "comments"
+    }
+  },
+  {
+    $unwind: "$comments"
+  },
+  {
+    $lookup: {
+      from: "comments",
+      localField: "_id",
+      foreignField: "videoId",
+      as: "allComments"
+    }
+  },
+  {
+    $unwind: "$allComments"
+  },
+  {
+    $group: {
+      _id: null, // Single document for report
+      totalComments: { $sum: 1 },
+      totalReplies: { $sum: { $size: { $ifNull: ["$comments.repliesId", []] } } }, // Count replies using $size and $ifNull
+      avgLikes: { $avg: "$comments.likes" }
+    }
+  },
+  { $project: { _id: 0, ...rest } } // Remove unnecessary _id field
+])

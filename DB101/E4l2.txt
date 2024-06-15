@@ -1,0 +1,74 @@
+1.List the courses that have not been rated by any students 
+db.courses.find({
+  "_id":{$nin:db.rating.distinct("courseID")}
+},
+{"name":1,"_id":0})
+
+2. Find the courses that have not been purchased by any students
+db.courses.find({
+  "_id":{$nin:db:course_data.distinct("courseID")}
+},{"name:1","_id":0})
+
+3.List all the students who have purchased a course , along with the number of courses each student has brought
+db.students.aggregate([
+  {
+    $lookup:{
+      from:"course_data",
+      localField:"id",
+      foreignField:"studentID",
+      as:"courses_bought"
+    }
+  },
+  {
+    $project:{
+      name:1,
+      no_c_bought:{$size:"$courses_bought"}
+    }
+  }
+])
+
+4.List all the courses's name that have at least one 
+rating
+
+db.courses.aggregate([
+  {
+    $lookup:{
+      from:"ratings",
+      localField:"id".
+      foreignField:"courseID",
+      as:"ratings"
+    }
+  },
+  {
+    $match:{
+      "rating":{
+         $exists:true,$ne[]
+      }
+    }
+  },
+  {
+    $project:{
+      name:1
+    }
+  }
+])
+
+5.list all the student's name that have not given  any ratin
+db.students.aggregate([
+  {
+    $lookup:{
+      from:"ratings",
+      localField:"id".
+      foreignField:"studentID",
+      as:"ratings_given"
+    }
+  },
+  {$match{
+    "rating_given:{$exists:false}"
+  }},
+  {
+    $project:{
+      name:1
+    }
+  }
+])

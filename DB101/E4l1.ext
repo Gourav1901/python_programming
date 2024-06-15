@@ -1,0 +1,223 @@
+1.Find the names and email addresses of all the students
+ans. db.students.find({},{name:1,email:1,_id:0})
+
+2.Calculate the average rating for each course 
+ans.db.Ratings.aggregate([
+  {
+    $group:{
+      _id:"$courseID",
+      averageRating:{$avg:"$rating"}
+    },
+    {
+      $lookup:{
+        from:"courses",
+        localField:"_id",
+        foreignField:"_id",
+        as:"course"
+      }
+    },
+    {$unwind : "course"},
+    {
+      $project:{
+        _id:0,
+        courseName:"$course.name",
+        averageRating:1
+      }
+    }
+  }
+])
+
+3.Calculate the total number of course taken by rach students
+ans.db.purchases.aggregate([
+  {
+    $group:{
+      _id:"$studentID",
+      totalCourses:{$sum:1}
+    }
+  },
+  {
+    $lookup:{
+      from:"students",
+      localField:"_id",
+      foreignField:"_id",
+      as:"students"
+    }
+  },
+  {$unwind:$"students"},
+  {
+    $project:{
+      _id:0,
+      studentName:"$student.name",
+      totalCourses:1
+    }
+  }
+])
+
+4.Find the highest rating for each course 
+ans. db.rating.aggregate([
+  {
+    $group:{
+      _id:"courseID",
+      highestRating:{$max:"rating"}
+    }
+  },
+  {
+    $lookup:{
+      from:"courses",
+      localField:"_id",
+      foreignField:"_id",
+      as:"courses"
+    }
+  },
+
+  {$unwind:"course"},
+  {
+    $project:{
+      _id:0,
+      courseName:"course.name",
+      highestRating:1
+    }
+  }
+])
+
+5.Find the  top 3 courses with highest average rating 
+db.rating.aggregate([
+  {
+    $group:{
+      _id:"$courseID",
+      averageRating:{$avg:"$rating"}
+    }
+  },
+{
+  $lookup:{
+    from:"courses".
+    localField:"_id",
+    foreignField:"_id".
+    as :"courses"
+  }
+},
+{$unwind:"$course"},
+{
+  $project:{
+    _id:0,
+    courseName:"$course.name",
+    averageRating:1
+  }
+},
+{
+  $sort:{averageRating:-1}
+},
+{$limit:3}
+
+])
+
+6.List the names and email adresses of instructors with a Ph.D
+qualification
+db.instructors.find({qualification:
+{$regex:"PH.D",$options:"i"}
+},
+{name:1,email:1,_id:0}
+)
+
+7.Calculate the total number of course taken by students who have "smith" in there  name
+db.purchases.aggregate([
+  {
+  $lookup:{
+    from:"students",
+    localField:"$studentID",
+    foreignField:"id",
+    as:"student"
+  }
+  },
+  {$unwind:"$student"},
+  {$match:{"student.name":/smith/}},
+  {$group:{_id:null,totalCourses:{$sum:1}}}
+])
+
+8.Find the course with the lowest avg ratingf
+db.ratings.aggregate([
+  {
+    $group:{
+      _id:"courseID",
+      averageRating:{$avg:"$rating"}
+
+    }
+  },
+  {
+    $lookup:{
+      from:"courses",
+      localField:"_id",
+      foreignField:"id",
+      as:"course"      
+    }
+  },
+  {$unwind:"$course"},
+  {
+    $project:{
+      _id:0,
+      courseName:"$course.name",
+      averageRating:1
+    }
+  },
+  {sort:{averageRating:1}},
+  {limit:1}
+])
+
+9.Find the course with most purchases
+db.purchases.aggregate([
+  {
+    $group:{
+      _id:"courseID",
+      totalPurchases:{$sum:1}
+
+    }
+  },
+  {
+    $lookup:{
+      from:"courses",
+      localField:"_id",
+      foreignField:"id"
+      as:"course"
+    }
+  },
+  {
+    $unwind:"$course"
+  },
+  {
+    $project:{
+      _id:0,
+      courseName:"$course.name",
+      totalPurchases:1
+    }
+  },
+  {sort:{totalPurchases:-1}},
+  {$limit:1}
+])
+
+10Find the course with highest number rating
+db.rating.aggregate({
+  {
+    $group:{
+      _id:"courseID",
+      numberOfRatings:{$sum:1}
+    }
+  },
+  {
+    $lookup:{
+      from:"courses",
+      localField:"_id",
+      foreignField:"id"
+      as:"course"
+    }
+  },
+  {$unwind:"$courses"},
+  {
+    $project:{
+      _id:0,
+      courseName:"course.name",
+      numberOfRatings:1
+    }
+  },
+  {$sort:{numberOfRatings:-1}},
+  {$limit:1}
+})
