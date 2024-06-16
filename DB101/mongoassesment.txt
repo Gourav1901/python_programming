@@ -1,0 +1,165 @@
+1.Write a query to find the most recent post in each discussion topic for a specific course. The course ID should be specified as ObjectId("66656fc1bfbe582c0a49da95"). The output should include the discussion topic ID (_id) and the latest post (latest_post).
+Ans.[
+  {
+    "$match": {
+      "course_id": ObjectId("66656fc1bfbe582c0a49da95")
+    }
+  },
+  {
+    "$unwind": "$posts"
+  },
+  {
+    "$sort": {
+      "posts.post_date": -1
+    }
+  },
+  {
+    "$group": {
+      "_id": "$_id",
+      "latest_post": {
+        "$first": "$posts"
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 1,
+      "latest_post": 1
+    }
+  }
+]
+
+2.Write a query to list all students who have not submitted a specific assignment. The assignment ID should be specified as ObjectId("66656fc6bfbe582c0a49de31"). The output should include the student's name (name) and email (email)
+ans.db.assignments.aggregate([
+  {
+    $match: {
+      _id: ObjectId("66656fc6bfbe582c0a49de31")
+    }
+  },
+  {
+    $lookup: {
+      from: "students",
+      localField: "course_id",
+      foreignField: "enrolled_courses",
+      as: "enrolled_students"
+    }
+  },
+  {
+    $unwind: "$enrolled_students"
+  },
+  {
+    $project: {
+      submitted_student_ids: "$submissions.student_id",
+      enrolled_student: "$enrolled_students"
+    }
+  },
+  {
+    $match: {
+      "enrolled_student._id": {
+        $nin: {
+          $map: {
+            input: "$submissions",
+            as: "submission",
+            in: "$$submission.student_id"
+          }
+        }
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      name: "$enrolled_student.name",
+      email: "$enrolled_student.email"
+    }
+  }
+]);
+
+3.Write a query to get the list of all courses along with the total number of discussions in each course. The output should include the course title (title) and the number of discussions (num_discussions).
+ans.db.courses.aggregate([
+  {
+    $project: {
+      title: 1,
+      num_discussions: { $size: "$discussions" }
+    }
+  }
+]);
+
+4.Write a query to find the total number of students enrolled in each course. The output should include the course title (title) and the number of students enrolled (num_students).
+Ans.db.courses.aggregate([
+  {
+    $project: {
+      title: 1,
+      num_students: { $size: "$students_enrolled" }
+    }
+  }
+]);
+
+5.Write a query to find the latest submission date for each assignment in a specific course. The course ID should be specified as ObjectId("66656fc1bfbe582c0a49da88"). The output should include the assignment ID (_id) and the latest submission date (latest_submission).
+ans.db.assignments.aggregate([
+  {
+    $match: {
+      course_id: ObjectId("66656fc1bfbe582c0a49da88")
+    }
+  },
+  {
+    $unwind: "$submissions"
+  },
+  {
+    $group: {
+      _id: "$_id",
+      latest_submission: { $max: "$submissions.submitted_on" }
+    }
+  },
+  {
+    $project: {
+      _id: 1,
+      latest_submission: 1
+    }
+  }
+]);
+
+6.Write a query to list each student along with their name, email, and the number of courses they are enrolled in. The field representing the number of courses should be named num_courses.
+Ans.db.students.aggregate([
+  {
+    $project: {
+      name: 1,
+      email: 1,
+      num_courses: { $size: "$enrolled_courses" }
+    }
+  }
+]);
+
+7.Write a query to find the most discussed topic in a specific course. The course ID should be specified as ObjectId("66656fc1bfbe582c0a49da58"). The output should include the topic (_id) and the number of posts (num_posts).
+ans.db.discussions.aggregate([
+  {
+    $match: {
+      course_id: ObjectId("66656fc1bfbe582c0a49da58")
+    }
+  },
+  {
+    $unwind: "$posts"
+  },
+  {
+    $group: {
+      _id: "$topic",
+      num_posts: { $sum: 1 }
+    }
+  },
+  {
+    $sort: {
+      num_posts: -1
+    }
+  },
+  {
+    $limit: 1
+  },
+  {
+    $project: {
+      _id: 1,
+      num_posts: 1
+    }
+  }
+]);
+
+8.
