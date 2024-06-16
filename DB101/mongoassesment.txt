@@ -162,4 +162,211 @@ ans.db.discussions.aggregate([
   }
 ]);
 
-8.
+8.Write a query to list students along with the courses they are enrolled in and the respective instructors for each course. The output should include the student's name (name), email (email), course title (student_courses.title), and instructor's name (instructor.name).
+ans.db.students.aggregate([
+  {
+    $lookup: {
+      from: "courses",
+      localField: "enrolled_courses",
+      foreignField: "_id",
+      as: "student_courses"
+    }
+  },
+  {
+    $unwind: "$student_courses"
+  },
+  {
+    $lookup: {
+      from: "instructors",
+      localField: "student_courses.instructor_id",
+      foreignField: "_id",
+      as: "instructor_details"
+    }
+  },
+  {
+    $unwind: "$instructor_details"
+  },
+  {
+    $project: {
+      name: 1,
+      email: 1,
+      "student_courses.title": 1,
+      "instructor.name": "$instructor_details.name"
+    }
+  }
+]);
+9.Write a query to find the average grade for each assignment within a specific course. The course ID should be specified as ObjectId("66656fc1bfbe582c0a49da46"). The output should include the assignment ID (_id) and the average grade (average_grade).
+ans.db.assignments.aggregate([
+  {
+    $match: {
+      course_id: ObjectId("66656fc1bfbe582c0a49da46")
+    }
+  },
+  {
+    $unwind: "$submissions"
+  },
+  {
+    $group: {
+      _id: "$_id",
+      average_grade: { $avg: "$submissions.grade" }
+    }
+  },
+  {
+    $project: {
+      _id: 1,
+      average_grade: 1
+    }
+  }
+]);
+10.Write a query to find all instructors who are teaching more than 3 courses. The output should include the instructor's name (name), email (email), and the number of courses they are teaching (num_courses).
+ans.db.courses.aggregate([
+  {
+    $group: {
+      _id: "$instructor_id",
+      num_courses: { $sum: 1 }
+    }
+  },
+  {
+    $match: {
+      num_courses: { $gt: 3 }
+    }
+  },
+  {
+    $lookup: {
+      from: "instructors",
+      localField: "_id",
+      foreignField: "_id",
+      as: "instructor_details"
+    }
+  },
+  {
+    $unwind: "$instructor_details"
+  },
+  {
+    $project: {
+      _id: 0,
+      name: "$instructor_details.name",
+      email: "$instructor_details.email",
+      num_courses: 1
+    }
+  }
+]);
+11.Calculate the average grade for each student across all courses.
+Write a query to calculate the average grade for each student across all courses. The output should include the student's name (name), email (email), and average grade (average_grade).
+ans.db.assignments.aggregate([
+  {
+    $unwind: "$submissions"
+  },
+  {
+    $group: {
+      _id: "$submissions.student_id",
+      average_grade: { $avg: "$submissions.grade" }
+    }
+  },
+  {
+    $lookup: {
+      from: "students",
+      localField: "_id",
+      foreignField: "_id",
+      as: "student_details"
+    }
+  },
+  {
+    $unwind: "$student_details"
+  },
+  {
+    $project: {
+      _id: 0,
+      name: "$student_details.name",
+      email: "$student_details.email",
+      average_grade: 1
+    }
+  }
+]);
+
+12.Get the list of assignments for a specific course along with the number of submissions.
+Write a query to list all assignments for a specific course along with the number of submissions for each assignment. The course ID should be specified as ObjectId("66656fc1bfbe582c0a49da7a"). The output should include course_assignments.title, course_assignments.description, and num_submissions
+ans.db.assignments.aggregate([
+  {
+    $match: {
+      course_id: ObjectId("66656fc1bfbe582c0a49da7a")
+    }
+  },
+  {
+    $project: {
+      title: 1,
+      description: 1,
+      num_submissions: { $size: "$submissions" }
+    }
+  }
+]);
+
+13.Write a query to calculate the total number of posts in discussions for a specific course. The course ID should be specified as ObjectId("66656fc1bfbe582c0a49da56"). The output should include the course ID (_id) and the total number of posts (total_posts).
+ans.db.discussions.aggregate([
+  {
+    $match: {
+      course_id: ObjectId("66656fc1bfbe582c0a49da56")
+    }
+  },
+  {
+    $unwind: "$posts"
+  },
+  {
+    $group: {
+      _id: "$course_id",
+      total_posts: { $sum: 1 }
+    }
+  },
+  {
+    $project: {
+      _id: 1,
+      total_posts: 1
+    }
+  }
+]);
+14.Write a query to list all courses with their title, description, and the name of the instructor teaching each course. The output should include title, description, and instructor.name.
+ans.db.courses.aggregate([
+  {
+    $lookup: {
+      from: "instructors",
+      localField: "instructor_id",
+      foreignField: "_id",
+      as: "instructor_details"
+    }
+  },
+  {
+    $unwind: "$instructor_details"
+  },
+  {
+    $project: {
+      title: 1,
+      description: 1,
+      "instructor.name": "$instructor_details.name"
+    }
+  }
+]);
+15.Write a query to list students along with the number of discussions they have participated in for a specific course. The course ID should be specified as ObjectId("66656fc1bfbe582c0a49da92"). The output should include the student's name (student.name), email (student.email), and the number of discussions they have participated in (num_participations).
+ans.db.students.aggregate([
+  {
+    $match: {
+      "courses.course_id": ObjectId("66656fc1bfbe582c0a49da92")  // Match specific course ID
+    }
+  },
+  {
+    $lookup: {
+      from: "discussions",
+      localField: "_id",
+      foreignField: "student_id",
+      as: "discussions"
+    }
+  },
+  {
+    $project: {
+      "student.name": 1,
+      "student.email": 1,
+      num_participations: { $size: "$discussions" }
+    }
+  }
+])
+
+
