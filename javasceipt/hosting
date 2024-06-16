@@ -1,0 +1,18 @@
+When JavaScript code runs, an execution context is created, and two phases occur:
+
+1.Memory Allocation Phase
+2.Code Execution Phase
+
+In the memory allocation phase, the JavaScript engine scans the code and allocates memory to variables (with the value undefined) and functions (with their full code). When you try to access these variables without initializing them, their values are printed as undefined. This mechanism in JavaScript is called hoisting.
+
+example
+
+console.log(greeting); // undefined
+var greeting = 'Hello, world!';
+
+sayHello(); // "Hello!"
+
+function sayHello() {
+    console.log('Hello!');
+}
+
